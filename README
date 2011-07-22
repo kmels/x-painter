@@ -1,0 +1,8 @@
+X-Painter
+=============
+
+X-Painter is Windows Paint-like application written in C using GTK+ and Cairo for my Computer Graphics course.
+
+Ideas Extra
+------------
+ * Agregar propios patrones dinámicamente.

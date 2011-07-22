@@ -13,19 +13,16 @@
 */
 
 static GtkItemFactoryEntry menu_items[] = {
-  { "/Archivo",         NULL,         NULL, 0, "<Branch>" },
-  { "/Archivo/Nuevo",     "<control>N", NULL, 0, NULL},
-  { "/Archivo/Abrir",    "<control>O", NULL, 0, NULL },
-  { "/Archivo/Guardar",    "<control>S", NULL, 0, NULL },
-  { "/Archivo/Guardar como", NULL,         NULL, 0, NULL },
-  { "/Archivo/separador",     NULL,         NULL, 0, "<Separator>" },
-  { "/Archivo/Quit",     "<control>Q", gtk_main_quit, 0, NULL },
-  { "/_Options",      NULL,         NULL, 0, "<Branch>" },
-  { "/Options/Test",  NULL,         NULL, 0, NULL },
-  { "/Ayuda",         NULL,         NULL, 0, "<LastBranch>" },
-  { "/Ayuda/Acerca de",   NULL,         NULL, 0, NULL },
+  { "/Archivo", NULL, NULL, 0, "<Branch>" },
+  { "/Archivo/Nuevo", "<control>N", NULL, 0, NULL},
+  { "/Archivo/Abrir", "<control>O", NULL, 0, NULL },
+  { "/Archivo/Guardar", "<control>S", NULL, 0, NULL },
+  { "/Archivo/Guardar como", NULL, NULL, 0, NULL },
+  { "/Archivo/separador", NULL, NULL, 0, "<Separator>" },
+  { "/Archivo/Salir", "<control>Q", gtk_main_quit, 0, NULL },
+  { "/Ayuda", NULL, NULL, 0, "<LastBranch>" },
+  { "/Ayuda/Acerca de", NULL, NULL, 0, NULL },
 };
-
 
 void get_main_menu( GtkWidget  *window,
                     GtkWidget **menubar )
@@ -36,16 +33,9 @@ void get_main_menu( GtkWidget  *window,
 
   accel_group = gtk_accel_group_new ();
 
-  /* This function initializes the item factory.
-     Param 1: The type of menu - can be GTK_TYPE_MENU_BAR, GTK_TYPE_MENU,
-              or GTK_TYPE_OPTION_MENU.
-     Param 2: The path of the menu.
-     Param 3: A pointer to a gtk_accel_group.  The item factory sets up
-              the accelerator table while generating menus.
-  */
+  /* This function initializes the item factory.*/
 
-  item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", 
-                                       accel_group);
+  item_factory = gtk_item_factory_new (GTK_TYPE_MENU_BAR, "<main>", accel_group);
 
   /* This function generates the menu items. Pass the item factory,
      the number of items in the array, the array itself, and any
@@ -58,4 +48,17 @@ void get_main_menu( GtkWidget  *window,
   if (menubar)
     /* Finally, return the actual menu bar created by the item factory. */ 
     *menubar = gtk_item_factory_get_widget (item_factory, "<main>");
+}
+
+void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
+  GtkToolItem *new;
+
+  *toolbar = gtk_toolbar_new();
+  gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
+
+  new = gtk_tool_button_new_from_stock(GTK_STOCK_CUT);
+  gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new, -1);
+
+  new = gtk_tool_button_new_from_stock(GTK_STOCK_COPY);
+  gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new, -1);  
 }
