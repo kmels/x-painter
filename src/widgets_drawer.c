@@ -54,7 +54,7 @@ void get_main_menu( GtkWidget  *window,
 //GTK_STOCK_CUT
 //GTK_STOCK_ZOOM_IN
 //GTK_STOCK_ZOOM_OUT
-static char* toolbar_item_icons[15] = {
+static char* toolbar_item_icons[] = {
   "../icons/icon_select.png",
   "../icons/icon_undo.png",
   "../icons/icon_save.png",
@@ -69,8 +69,7 @@ static char* toolbar_item_icons[15] = {
   "../icons/icon_eraser.png",
   "../icons/icon_spray.png",
   "../icons/icon_brush.png",
-  "../icons/icon_pen.png",
-  "../icons/icon_pen.png"  
+  "../icons/icon_pen.png"
 };
 
 
