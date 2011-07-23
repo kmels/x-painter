@@ -1,4 +1,4 @@
-X-Painter
+ X-Painter
 =============
 
 X-Painter is Windows Paint-like application written in C using GTK+ and Cairo for my Computer Graphics course.
@@ -6,3 +6,23 @@ X-Painter is Windows Paint-like application written in C using GTK+ and Cairo fo
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
+
+Specs 
+-----------
+- Cut, Copy Paste
+- Undo
+- Save
+- Load
+- Circulo,Elipses, rectangulos, poligono (fill)
+- Línea – 3 grosores
+- Flood fill - Paterns
+- Texto
+- Get color
+- Dibujar encima el círculo, cuadrado, etc
+- Spray
+- Borrador - MARCADOR
+- Bmp
+- New
+- 2 patrones de llenado
+- Mouseb
+- ASM = Put Char - Put Pixel - Get Color - Set/unset Video

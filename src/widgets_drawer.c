@@ -50,15 +50,44 @@ void get_main_menu( GtkWidget  *window,
     *menubar = gtk_item_factory_get_widget (item_factory, "<main>");
 }
 
+//GTK_STOCK_COLOR_PICKER
+//GTK_STOCK_CUT
+//GTK_STOCK_ZOOM_IN
+//GTK_STOCK_ZOOM_OUT
+static char* toolbar_item_icons[15] = {
+  "../icons/icon_select.png",
+  "../icons/icon_undo.png",
+  "../icons/icon_save.png",
+  "../icons/icon_load.png",
+  "../icons/icon_line",
+  "../icons/icon_circle.png",
+  "../icons/icon_ellipse.png",
+  "../icons/icon_rectangle.png",
+  "../icons/icon_polygon",
+  "../icons/icon_flood.png",
+  "../icons/icon_text.png",
+  "../icons/icon_eraser.png",
+  "../icons/icon_spray.png",
+  "../icons/icon_brush.png",
+  "../icons/icon_pen.png",
+  "../icons/icon_pen.png"  
+};
+
+
 void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
-  GtkToolItem *new;
+  GtkToolItem *new_tool_item;
+  GtkWidget *new_tool_item_icon;
 
   *toolbar = gtk_toolbar_new();
   gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
+  /* SELECT */
+  
+  int i;
+  int nicons = sizeof toolbar_item_icons / sizeof (*toolbar_item_icons);
 
-  new = gtk_tool_button_new_from_stock(GTK_STOCK_CUT);
-  gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new, -1);
-
-  new = gtk_tool_button_new_from_stock(GTK_STOCK_COPY);
-  gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new, -1);  
+  for (i = 0; i < nicons; i++){
+    new_tool_item_icon = gtk_image_new_from_file(toolbar_item_icons[i]);
+    new_tool_item = gtk_tool_button_new(new_tool_item_icon,NULL);
+    gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new_tool_item, -1);
+  }  
 }
