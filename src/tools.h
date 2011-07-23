@@ -1,6 +1,6 @@
 #ifndef TOOLS
 #define TOOLS
 
-void brush(GtkWidget *widget, double x, double y);
+inline void brush(cairo_t *cr, double x1, double y1, double x2, double y2);
 #endif
 

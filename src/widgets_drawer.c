@@ -75,6 +75,10 @@ static XPainterToolItem toolbar_item_icons[] = {
   //"../icons/icon_pen.png"
 };
 
+void kmel (GtkWidget *widget, gpointer data){
+  printf("ASDF\n");
+}
+
 void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   GtkToolItem *new_tool_item;
   GtkWidget *new_tool_item_icon;
