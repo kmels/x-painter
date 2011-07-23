@@ -1,4 +1,8 @@
 #include <gtk/gtk.h>
+#include "global.h"
+#include "mouse_handler.h"
+#include "types/xpainter_toolitem_id.h"
+#include "tools.h"
 
 int isdragging = 0;
 
@@ -19,18 +23,16 @@ gboolean handle_mouse_release(GtkWidget *widget, GdkEventButton *event, gpointer
 }
 
 gboolean handle_mouse_drag(GtkWidget *widget, GdkEventButton *event, gpointer user_data){  
-  if (isdragging) {
-    cairo_t * cr;
-    cr = gdk_cairo_create(widget->window);
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_set_line_width (cr, 0.5);
-
-    cairo_rectangle(cr,event->x,event->y,1,1);
-    
-    
-    cairo_stroke(cr);
-    cairo_destroy(cr);    
+  switch (current_tool){
+  case XPainter_BRUSH_TOOL: {
+    if (isdragging)
+      brush(widget, event->x, event->y);
+    break;
   }
+  default: 
+    //printf("OTRO\n");
+    break;
+  }  
 
   return TRUE;
 }

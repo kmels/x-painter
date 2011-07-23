@@ -1,5 +1,8 @@
 #include <gtk/gtk.h>
 #include <strings.h>
+#include "types/xpainter_toolitem.h"
+#include "global.h"
+//#include "types/xpainter_toolitem_id.h"
 
 /* This is the GtkItemFactoryEntry structure used to generate new menus.
    Item 1: The menu path. The letter after the underscore indicates an
@@ -54,11 +57,11 @@ void get_main_menu( GtkWidget  *window,
 //GTK_STOCK_CUT
 //GTK_STOCK_ZOOM_IN
 //GTK_STOCK_ZOOM_OUT
-static char* toolbar_item_icons[] = {
-  "../icons/icon_select.png",
-  "../icons/icon_undo.png",
-  "../icons/icon_save.png",
-  "../icons/icon_load.png",
+static XPainterToolItem toolbar_item_icons[] = {
+  { "../icons/icon_select.png", XPainter_SELECT_TOOL },
+  { "../icons/icon_undo.png", XPainter_UNDO_TOOL},
+  { "../icons/icon_save.png", XPainter_SAVE_TOOL},
+  /*"../icons/icon_load.png",
   "../icons/icon_line",
   "../icons/icon_circle.png",
   "../icons/icon_ellipse.png",
@@ -67,11 +70,10 @@ static char* toolbar_item_icons[] = {
   "../icons/icon_flood.png",
   "../icons/icon_text.png",
   "../icons/icon_eraser.png",
-  "../icons/icon_spray.png",
-  "../icons/icon_brush.png",
-  "../icons/icon_pen.png"
+  "../icons/icon_spray.png",*/
+  { "../icons/icon_brush.png", XPainter_BRUSH_TOOL},
+  //"../icons/icon_pen.png"
 };
-
 
 void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   GtkToolItem *new_tool_item;
@@ -83,10 +85,10 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   
   int i;
   int nicons = sizeof toolbar_item_icons / sizeof (*toolbar_item_icons);
-
   for (i = 0; i < nicons; i++){
-    new_tool_item_icon = gtk_image_new_from_file(toolbar_item_icons[i]);
+    new_tool_item_icon = gtk_image_new_from_file(toolbar_item_icons[i].path_to_image);    
     new_tool_item = gtk_tool_button_new(new_tool_item_icon,NULL);
+    g_signal_connect(new_tool_item, "clicked", G_CALLBACK(assign_current_tool), (gpointer) toolbar_item_icons[i].type);
     gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new_tool_item, -1);
   }  
 }

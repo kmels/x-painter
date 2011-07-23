@@ -26,3 +26,7 @@ Specs
 - 2 patrones de llenado
 - Mouseb
 - ASM = Put Char - Put Pixel - Get Color - Set/unset Video
+
+TODO
+------
+ * Hacer toolbar con GtkToolPalette
