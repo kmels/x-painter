@@ -5,6 +5,7 @@
 
 typedef struct{
   char *path_to_image;
-  XPainterToolItemType type;
+  char *name;
+  XPainterToolItemType type;  
 } XPainterToolItem;
 #endif

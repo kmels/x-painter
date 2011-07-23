@@ -15,7 +15,9 @@ typedef enum{
   XPainter_TEXT_TOOL,
   XPainter_ERASER_TOOL,
   XPainter_SPRAY_TOOL,
-  XPainter_BRUSH_TOOL = 14,
-  XPainter_PEN_TOOL,  
+  XPainter_BRUSH_TOOL,
+  XPainter_PEN_TOOL,
+  XPainter_ZOOM_TOOL,
+  XPainter_MOVE_TOOL
 } XPainterToolItemType;
 #endif

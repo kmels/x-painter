@@ -58,41 +58,40 @@ void get_main_menu( GtkWidget  *window,
 //GTK_STOCK_ZOOM_IN
 //GTK_STOCK_ZOOM_OUT
 static XPainterToolItem toolbar_item_icons[] = {
-  { "../icons/icon_select.png", XPainter_SELECT_TOOL },
-  { "../icons/icon_undo.png", XPainter_UNDO_TOOL},
-  { "../icons/icon_save.png", XPainter_SAVE_TOOL},
-  /*"../icons/icon_load.png",
-  "../icons/icon_line",
-  "../icons/icon_circle.png",
-  "../icons/icon_ellipse.png",
-  "../icons/icon_rectangle.png",
-  "../icons/icon_polygon",
-  "../icons/icon_flood.png",
-  "../icons/icon_text.png",
-  "../icons/icon_eraser.png",
-  "../icons/icon_spray.png",*/
-  { "../icons/icon_brush.png", XPainter_BRUSH_TOOL},
-  //"../icons/icon_pen.png"
+  { "../icons/icon_select.png", "Seleccionar", XPainter_SELECT_TOOL },
+  { "../icons/icon_move.png", "Mover", XPainter_MOVE_TOOL },
+  { "../icons/icon_undo.gif", "Deshacer", XPainter_UNDO_TOOL},
+  { "../icons/icon_redo.gif", "Rehacer", XPainter_SAVE_TOOL},
+  { "../icons/icon_line.gif", "Línea", XPainter_LINE_TOOL },
+  { "../icons/icon_circle.gif", "Círculo", XPainter_CIRCLE_TOOL },
+  { "../icons/icon_ellipse.png", "Elipse", XPainter_ELLIPSE_TOOL },
+  { "../icons/icon_rectangle.gif", "Rectangulo", XPainter_RECTANGLE_TOOL },
+  { "../icons/icon_polygon.gif", "Polígono", XPainter_POLYGON_TOOL },
+  { "../icons/icon_flood.png", "Rellenar", XPainter_FLOOD_TOOL },
+  { "../icons/icon_text.png", "Texto", XPainter_TEXT_TOOL },
+  { "../icons/icon_eraser.png", "Borrador", XPainter_ERASER_TOOL },
+  { "../icons/icon_spray.png", "Spray", XPainter_SPRAY_TOOL },
+  { "../icons/icon_brush.png", "Brush", XPainter_BRUSH_TOOL},
+  { "../icons/icon_pen.png", "Lapicero", XPainter_PEN_TOOL},
+  { "../icons/icon_zoom.png", "Zoom", XPainter_ZOOM_TOOL}
 };
-
-void kmel (GtkWidget *widget, gpointer data){
-  printf("ASDF\n");
-}
 
 void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   GtkToolItem *new_tool_item;
   GtkWidget *new_tool_item_icon;
 
   *toolbar = gtk_toolbar_new();
-  gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
-  /* SELECT */
+  gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_BOTH);
+  //gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
+  
   
   int i;
   int nicons = sizeof toolbar_item_icons / sizeof (*toolbar_item_icons);
-  for (i = 0; i < nicons; i++){
+  for (i = 0; i < nicons; i++){  
     new_tool_item_icon = gtk_image_new_from_file(toolbar_item_icons[i].path_to_image);    
-    new_tool_item = gtk_tool_button_new(new_tool_item_icon,NULL);
-    g_signal_connect(new_tool_item, "clicked", G_CALLBACK(assign_current_tool), (gpointer) toolbar_item_icons[i].type);
+    new_tool_item = gtk_tool_button_new(new_tool_item_icon,toolbar_item_icons[i].name);
+    g_signal_connect(new_tool_item, "clicked", G_CALLBACK(assign_current_tool), (gpointer) toolbar_item_icons[i].type);   
     gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new_tool_item, -1);
-  }  
+    gtk_widget_set_can_focus ((GtkWidget*) new_tool_item, TRUE);
+  }
 }

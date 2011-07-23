@@ -44,8 +44,10 @@ int main( int argc,
   //ends gtkdrawable + cairo example
   
   gtk_widget_show (menubar);
-  
+  gtk_widget_grab_focus (menubar);
+
   gtk_widget_show_all (window);
+  
   gtk_main ();
   
   return(0);

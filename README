@@ -30,3 +30,4 @@ Specs
 TODO
 ------
  * Hacer toolbar con GtkToolPalette
+ * Pintar focus en el current tool
