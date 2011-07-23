@@ -1,24 +1,6 @@
 #include <gtk/gtk.h>
+#include "drawer_handler.h"
 #include "widgets_drawer.h"
-
-gboolean put_pixel(GtkWidget *widget, GdkEventButton *event,
-    gpointer user_data)
-{ 
-  if (event->button == 1) {
-    cairo_t * cr;
-    cr = gdk_cairo_create(widget->window);
-    cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_set_line_width (cr, 0.5);
-
-    cairo_rectangle(cr,event->x,event->y,1,1);
-    
-    
-    cairo_stroke(cr);
-    cairo_destroy(cr);    
-  }
-
-  return TRUE;
-}
 
 int main( int argc,
           char *argv[] )
@@ -52,9 +34,9 @@ int main( int argc,
   gtk_widget_set_size_request (canvas, 500, 600);
   
   //gtk_widget_add_events(canvas, GDK_BUTTON_PRESS_MASK);
-    gtk_widget_add_events(canvas, GDK_ALL_EVENTS_MASK);
-    g_signal_connect(canvas, "button-press-event", G_CALLBACK(put_pixel), NULL);
-    g_signal_connect(canvas, "motion-notify-event", G_CALLBACK(put_pixel), NULL);
+  gtk_widget_add_events(canvas, GDK_ALL_EVENTS_MASK);
+  g_signal_connect(canvas, "button-press-event", G_CALLBACK(handle_mouse_event), NULL);
+  g_signal_connect(canvas, "motion-notify-event", G_CALLBACK(handle_mouse_event), NULL);
 
   gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);
   
