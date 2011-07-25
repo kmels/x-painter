@@ -81,9 +81,8 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   GtkWidget *new_tool_item_icon;
 
   *toolbar = gtk_toolbar_new();
-  gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_BOTH);
-  //gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
-  
+  //gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_BOTH);
+  gtk_toolbar_set_style(GTK_TOOLBAR(*toolbar), GTK_TOOLBAR_ICONS);
   
   int i;
   int nicons = sizeof toolbar_item_icons / sizeof (*toolbar_item_icons);

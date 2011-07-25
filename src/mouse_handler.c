@@ -5,8 +5,6 @@
 #include "tools.h"
 #include <string.h> /* memset */
 
-int isdragging = 0;
-
 gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
   static struct {
     gboolean isdragging;
@@ -14,21 +12,34 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
     double x, y;
   } mouseState;
   gint type = GPOINTER_TO_INT(t);
-  
+    
   switch(type){
-    case MOUSE_CLICK:{
+    case MOUSE_CLICK:{	
       GdkEventButton *event = (GdkEventButton*) e;
       switch(event->type) {
-         case GDK_BUTTON_PRESS: {
+         case GDK_BUTTON_PRESS: {	   	   
 	   mouseState.isdragging = TRUE;
-	   mouseState.cr = gdk_cairo_create(widget->window);
+	   mouseState.cr = gdk_cairo_create(widget->window);	   
 	   cairo_set_source_rgb(mouseState.cr, 0, 0, 0);
-	   cairo_set_line_width(mouseState.cr, 2);
+	   cairo_set_source_rgb(mouseState.cr, 0.3, 0.4, 0.6);
+	   cairo_set_line_width(mouseState.cr, 1);
 	   mouseState.x = event->x;
-	   mouseState.y = event->y; 
+	   mouseState.y = event->y;
+	   	   	   
+	   switch(current_tool){
+	      case XPainter_UNDO_TOOL: undo(mouseState.cr); break;
+	      default: break;
+	   }
 	 }
 	   break;
       case GDK_BUTTON_RELEASE: {
+	mouseState.isdragging = 0;
+
+	switch(current_tool){
+	  case XPainter_UNDO_TOOL: break;
+	  default: save_surface_in_history(cairo_get_target(mouseState.cr)); break;
+	}
+	
 	cairo_destroy(mouseState.cr);
 	memset(&mouseState, 0, sizeof(mouseState));
       }
@@ -46,23 +57,24 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	  gdkWindow = gdk_get_default_root_window();
 	  memset(&mouseState, 0, sizeof(mouseState));
 	  return TRUE;
-	}
+      }
       
       if (!mouseState.isdragging ||
 	  (mouseState.x == event->x && mouseState.y == event->y))
 	return TRUE;
       
-      brush(mouseState.cr, mouseState.x, mouseState.y, event->x, event->y);
-      mouseState.x = event->x;		mouseState.y = event->y;
-      
-      
-	// even though we don't use the resulting information from this call, 
-	// calling it is an indication to the main_loop() 
-	// that we are ready to receive the next mouse motion notify event
-	gint x, y;
-	GdkModifierType state;
-	gdk_window_get_pointer(gdkWindow, &x, &y, &state);
-      
+      switch(current_tool){
+         case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.x, mouseState.y, event->x, event->y); break; 
+         default: break;
+      }
+                  
+      mouseState.x = event->x;		mouseState.y = event->y;            
+      // even though we don't use the resulting information from this call, 
+      // calling it is an indication to the main_loop() 
+      // that we are ready to receive the next mouse motion notify event
+      gint x, y;
+      GdkModifierType state;
+      gdk_window_get_pointer(gdkWindow, &x, &y, &state);      
     }
       break;
   default:

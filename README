@@ -1,4 +1,4 @@
- X-Painter
+X-Painter
 =============
 
 X-Painter is Windows Paint-like application written in C using GTK+ and Cairo for my Computer Graphics course.
@@ -27,7 +27,15 @@ Specs
 - Mouseb
 - ASM = Put Char - Put Pixel - Get Color - Set/unset Video
 
-TODO
+TODO 
 ------
- * Hacer toolbar con GtkToolPalette
- * Pintar focus en el current tool
+ * [#A] Pintar canvas de blanco al inicio
+ * [#B] Arreglar memoria del undo (cuando se hace hasta el final deja step + 1)
+ * [#B] Guardar el canvas vacío inicial en el historial (para undo)
+ * [#C] Hacer que se haga undo con el botón de Undo, no haciendo click en canvas.
+ * [#C] Hacer toolbar con GtkToolPalette
+ * [#C] Pintar focus en el current tool
+   
+[#A] = must
+[#B] = falla
+[#C] = no esencial, pero nice.
