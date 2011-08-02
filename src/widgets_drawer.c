@@ -2,6 +2,7 @@
 #include <strings.h>
 #include "types/xpainter_toolitem.h"
 #include "global.h"
+#include "tools.h"
 //#include "types/xpainter_toolitem_id.h"
 
 /* This is the GtkItemFactoryEntry structure used to generate new menus.
@@ -93,4 +94,23 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
     gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new_tool_item, -1);
     gtk_widget_set_can_focus ((GtkWidget*) new_tool_item, TRUE);
   }
+}
+
+void paint_white_canvas(cairo_surface_t *surface,cairo_t *cr){
+  cairo_surface_t *surface_to_save = cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR, 1200, 1200);
+  cairo_t *new_cr = cairo_create(surface_to_save);
+  
+  cairo_set_source_rgb(new_cr, 0.3, 0.4, 0.6);
+  cairo_set_line_width(new_cr, 1);
+  cairo_rectangle(new_cr,0,0,400,400);
+  cairo_set_source_surface(new_cr,surface,0,0);
+  cairo_paint(new_cr);
+
+  save_surface_in_history(surface_to_save);
+  //surfaces_history[++current_surface_index] = surface_to_save;
+  //surfaces_history_size++;
+
+  cairo_set_operator(cr,CAIRO_OPERATOR_SOURCE);
+  cairo_set_source_surface(cr,surfaces_history[0],0,0);
+  cairo_paint(cr);  
 }

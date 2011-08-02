@@ -3,6 +3,10 @@ X-Painter
 
 X-Painter is Windows Paint-like application written in C using GTK+ and Cairo for my Computer Graphics course.
 
+How to compile and run (dependency: gtk)
+=============
+gcc -Wall main.c widgets_drawer.c global.c mouse_handler.c tools.c -o main.o `pkg-config --cflags libgnomecanvas-2.0 --libs gtk+-2.0` && ./main.o
+
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
@@ -39,3 +43,4 @@ TODO
 [#A] = must
 [#B] = falla
 [#C] = no esencial, pero nice.
+
