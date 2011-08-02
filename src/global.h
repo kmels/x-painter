@@ -10,5 +10,7 @@ cairo_surface_t *current_surface;
 int current_surface_index;
 int surfaces_history_size;
 
+gboolean canvas_drawn;
+
 void assign_current_tool(GtkWidget *widget, gpointer data);
 #endif

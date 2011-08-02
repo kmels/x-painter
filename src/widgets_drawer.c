@@ -96,3 +96,25 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   }
 }
 
+gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
+  //is the drawing area initialized?
+  if (!canvas_drawn){
+    canvas_drawn = TRUE;
+    return FALSE;
+  }
+  else{
+    //it has been initialized, now we are either in a redrawing or a new canvas escenario
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    
+    if (current_surface_index < 0){ //new canvas escenario, paint it white      
+      cairo_set_source_rgb(cr, 255, 255, 255);
+      cairo_paint(cr);
+      save_current_surface(cairo_get_target(cr));
+      save_current_surface_in_history();
+    }else{
+      //redraw
+      paint_current_surface_on_canvas(cr);
+    }
+    return TRUE;
+  }  
+}

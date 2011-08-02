@@ -26,7 +26,7 @@ void save_current_surface(cairo_surface_t *surface){
   current_surface = surface_to_save;
 }
 
-void undo_current_drawing(cairo_t *cr){
+void paint_current_surface_on_canvas(cairo_t *cr){
   cairo_save (cr);
   cairo_set_source_surface(cr,current_surface,0,0);
   cairo_paint (cr);
@@ -34,7 +34,7 @@ void undo_current_drawing(cairo_t *cr){
 }
 
 void undo(cairo_t *cr){
-  printf("Current surface #%d\n",current_surface_index-1);
+  printf("Undoing to surface: #%d\n",current_surface_index-1);
 
   if (current_surface_index - 1 >= 0){  
     cairo_set_operator(cr,CAIRO_OPERATOR_SOURCE);
@@ -47,7 +47,8 @@ void undo(cairo_t *cr){
 
 /* Saves a surface in history */
 void save_current_surface_in_history(){
+  printf("Saving surface: #%d\n",current_surface_index+1);
+
   surfaces_history[++current_surface_index] = current_surface;
   surfaces_history_size++; 
 }
-

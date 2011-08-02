@@ -33,9 +33,6 @@ Specs
 
 TODO 
 ------
- * [#A] Pintar canvas de blanco al inicio
- * [#B] Arreglar memoria del undo (cuando se hace hasta el final deja step + 1)
- * [#B] Guardar el canvas vacío inicial en el historial (para undo)
  * [#C] Hacer que se haga undo con el botón de Undo, no haciendo click en canvas.
  * [#C] Hacer toolbar con GtkToolPalette
  * [#C] Pintar focus en el current tool

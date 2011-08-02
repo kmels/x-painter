@@ -4,26 +4,6 @@
 #include "widgets_drawer.h"
 #include "tools.h"
 
-void test(GtkWidget *widget, gpointer userdata){
-  cairo_t *cr = gdk_cairo_create(gtk_widget_get_root_window(widget));
-
-  
-  cairo_set_operator(cr,CAIRO_OPERATOR_SOURCE);
-  cairo_set_source_rgb(cr, 0.3, 0.4, 0.6);
-  cairo_set_line_width(cr, 1);
-  cairo_rectangle(cr,50,50,15,15);
-  cairo_move_to(cr, 0, 0);
-  cairo_line_to(cr, 50, 50);
-  cairo_stroke(cr);
-  cairo_paint(cr);
-  cairo_fill(cr);
-  cairo_destroy(cr);
-  
-  printf("test %p\n",cr);
-  save_current_surface(cairo_get_target(cr));
-  save_current_surface_in_history();
-}
-
 int main( int argc,
           char *argv[] )
 {
@@ -63,23 +43,11 @@ int main( int argc,
   g_signal_connect(canvas, "button-press-event", G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_CLICK));
   g_signal_connect(canvas, "button-release-event", G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_CLICK));
   g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_DRAG));
-  g_signal_connect(canvas, "show",G_CALLBACK(test), GINT_TO_POINTER(MOUSE_DRAG));
+  g_signal_connect(canvas, "expose-event",G_CALLBACK(redraw_canvas), GINT_TO_POINTER(MOUSE_DRAG));
     
   gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);
     
-  gtk_widget_show_all (window);  
-  
-  /*  cairo_t *cr = gdk_cairo_create(canvas->window);
-  printf("%p\n",cr);
-  cairo_set_source_rgb(cr, 0, 0, 0);
-  cairo_set_source_rgb(cr, 0.3, 0.4, 0.6);
-  cairo_set_line_width(cr, 1);
-  cairo_move_to(cr, 50, 50);
-  cairo_line_to(cr, 100, 100);
-  cairo_stroke(cr);
-  cairo_paint(cr);
-  cairo_destroy(cr);*/
-  
+  gtk_widget_show_all (window);    
   //paint_white_canvas(cairo_get_target(gdk_cairo_create(canvas->window)),gdk_cairo_create(canvas->window));
   //save_surface_in_history(cairo_get_target(gdk_cairo_create(canvas->window)));
   gtk_main ();

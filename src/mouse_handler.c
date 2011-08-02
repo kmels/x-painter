@@ -24,7 +24,6 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
          case GDK_BUTTON_PRESS: {
 	   mouseState.ispainting = TRUE;
 	   mouseState.cr = gdk_cairo_create(widget->window);	   
-	   //printf("%p\n",mouseState.cr);
 	   save_current_surface(cairo_get_target(mouseState.cr));
 	   cairo_set_source_rgb(mouseState.cr, 0, 0, 0);
 	   cairo_set_source_rgb(mouseState.cr, 0.3, 0.4, 0.6);
@@ -80,11 +79,8 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
       case XPainter_LINE_TOOL: {	
 	mouseState.save_dragging = FALSE;
-	undo_current_drawing(mouseState.cr);
-	//cairo_save (mouseState.cr);	
-	
+	paint_current_surface_on_canvas(mouseState.cr);	
 	line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
-	//cairo_restore(mouseState.cr);
       } break;
          default: break;
       }
