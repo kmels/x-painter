@@ -14,6 +14,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
     Coordinate coordinates[5000];
     int coordinates_size;
     gboolean save_dragging;
+    gboolean should_save_change;
   } mouseState;
   gint type = GPOINTER_TO_INT(t);
     
@@ -41,17 +42,19 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	   break;
       case GDK_BUTTON_RELEASE: {
 	mouseState.ispainting = FALSE;
+	mouseState.should_save_change = TRUE;
 
 	switch(current_tool){
-	  case XPainter_UNDO_TOOL: break;
-	case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
-	case XPainter_RECTANGLE_TOOL: rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
-	default: {
-	  save_current_surface(cairo_get_target(mouseState.cr));
-	  save_current_surface_in_history(); 
-	}break;
+	case XPainter_UNDO_TOOL: mouseState.should_save_change = FALSE; break;
+	case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
+	case XPainter_RECTANGLE_TOOL: rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
+	default : break;
 	}
 	
+	if (mouseState.should_save_change){
+	  save_current_surface(cairo_get_target(mouseState.cr));
+	  save_current_surface_in_history();
+	}
 	cairo_destroy(mouseState.cr);
 	memset(&mouseState, 0, sizeof(mouseState));
       }
