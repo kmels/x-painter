@@ -20,7 +20,8 @@ void test(GtkWidget *widget, gpointer userdata){
   cairo_destroy(cr);
   
   printf("test %p\n",cr);
-  save_surface_in_history(cairo_get_target(cr));  
+  save_current_surface(cairo_get_target(cr));
+  save_current_surface_in_history();
 }
 
 int main( int argc,

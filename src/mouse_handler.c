@@ -13,6 +13,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
     //double x, y;
     Coordinate coordinates[5000];
     int coordinates_size;
+    gboolean save_dragging;
   } mouseState;
   gint type = GPOINTER_TO_INT(t);
     
@@ -24,28 +25,31 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	   mouseState.ispainting = TRUE;
 	   mouseState.cr = gdk_cairo_create(widget->window);	   
 	   //printf("%p\n",mouseState.cr);
+	   save_current_surface(cairo_get_target(mouseState.cr));
 	   cairo_set_source_rgb(mouseState.cr, 0, 0, 0);
 	   cairo_set_source_rgb(mouseState.cr, 0.3, 0.4, 0.6);
 	   cairo_set_line_width(mouseState.cr, 1);
 
-
-	   printf("coordinates_size: %d\n",mouseState.coordinates_size);
 	   mouseState.coordinates[mouseState.coordinates_size].x = event->x;
 	   mouseState.coordinates[mouseState.coordinates_size].y = event->y;
-	   mouseState.coordinates_size++;
-	   	   	   
+	   mouseState.coordinates_size++;	   	   
+
 	   switch(current_tool){
-	      case XPainter_UNDO_TOOL: undo(mouseState.cr); break;
+	      case XPainter_UNDO_TOOL: undo(mouseState.cr); break;		
 	      default: break;
 	   }
 	 }
 	   break;
       case GDK_BUTTON_RELEASE: {
-	mouseState.ispainting = 0;
+	mouseState.ispainting = FALSE;
 
 	switch(current_tool){
 	  case XPainter_UNDO_TOOL: break;
-	  default: save_surface_in_history(cairo_get_target(mouseState.cr)); break;
+	case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+	default: {
+	  save_current_surface(cairo_get_target(mouseState.cr));
+	  save_current_surface_in_history(); 
+	}break;
 	}
 	
 	cairo_destroy(mouseState.cr);
@@ -57,7 +61,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       }
     } //end case MOUSE_CLICK
       break;
-    case MOUSE_DRAG:{
+    case MOUSE_DRAG:{      
       GdkEventMotion *event = (GdkEventMotion*) e;
       static	GdkWindow *gdkWindow;
       
@@ -67,18 +71,29 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	  return TRUE;
       }
       
-      if (!mouseState.ispainting) //are we doing paintint?
+      mouseState.save_dragging = TRUE;
+
+      if (!mouseState.ispainting) //are we doing painting?
 	return TRUE;
       
       switch(current_tool){
       case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
-      case XPainter_LINE_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
+      case XPainter_LINE_TOOL: {	
+	mouseState.save_dragging = FALSE;
+	undo_current_drawing(mouseState.cr);
+	//cairo_save (mouseState.cr);	
+	
+	line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+	//cairo_restore(mouseState.cr);
+      } break;
          default: break;
       }
       
-      mouseState.coordinates[mouseState.coordinates_size].x = event->x;
-      mouseState.coordinates[mouseState.coordinates_size].y = event->y;      
-      mouseState.coordinates_size++;
+      if (mouseState.save_dragging){
+	mouseState.coordinates[mouseState.coordinates_size].x = event->x;
+	mouseState.coordinates[mouseState.coordinates_size].y = event->y;      
+	mouseState.coordinates_size++;
+      }
 
       // even though we don't use the resulting information from this call, 
       // calling it is an indication to the main_loop() 
