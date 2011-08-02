@@ -7,6 +7,10 @@ How to compile and run (dependency: gtk)
 =============
 gcc -Wall main.c widgets_drawer.c global.c mouse_handler.c tools.c -o main.o `pkg-config --cflags libgnomecanvas-2.0 --libs gtk+-2.0` && ./main.o
 
+Extra
+=============
+ * Dibujar líneas en __tiempo real_
+
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
