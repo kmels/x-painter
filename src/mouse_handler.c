@@ -45,6 +45,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	switch(current_tool){
 	  case XPainter_UNDO_TOOL: break;
 	case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+	case XPainter_RECTANGLE_TOOL: rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
 	default: {
 	  save_current_surface(cairo_get_target(mouseState.cr));
 	  save_current_surface_in_history(); 
@@ -82,7 +83,12 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	paint_current_surface_on_canvas(mouseState.cr);	
 	line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
       } break;
-         default: break;
+      case XPainter_RECTANGLE_TOOL: {	
+	mouseState.save_dragging = FALSE;
+	paint_current_surface_on_canvas(mouseState.cr);	
+	rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+      } break;
+      default: break;
       }
       
       if (mouseState.save_dragging){

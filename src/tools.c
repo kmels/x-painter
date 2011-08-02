@@ -68,6 +68,12 @@ inline void brush(cairo_t *cr, double x1, double y1, double x2, double y2){
   line(cr,x1,y1,x2,y2);
 }
 
+void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
+  line(cr,x1,y1,x2,y1);
+  line(cr,x2,y1,x2,y2);
+  line(cr,x2,y2,x1,y2);
+  line(cr,x1,y2,x1,y1);
+}
 /* Saves a surface, tipically called before drawing anything new, so we can simulate drawing on it*/
 void save_current_surface(cairo_surface_t *surface){
   cairo_surface_t *surface_to_save = cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR, 1200, 1200);
