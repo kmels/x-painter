@@ -74,38 +74,4 @@ void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   line(cr,x2,y2,x1,y2);
   line(cr,x1,y2,x1,y1);
 }
-/* Saves a surface, tipically called before drawing anything new, so we can simulate drawing on it*/
-void save_current_surface(cairo_surface_t *surface){
-  cairo_surface_t *surface_to_save = cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR, 1200, 1200);
-  cairo_t *new_cr = cairo_create(surface_to_save);   
-  cairo_set_source_surface(new_cr,surface,0,0);
-  cairo_paint(new_cr);
-  current_surface = surface_to_save;
-}
 
-void paint_current_surface_on_canvas(cairo_t *cr){
-  cairo_save (cr);
-  cairo_set_source_surface(cr,current_surface,0,0);
-  cairo_paint (cr);
-  cairo_restore (cr);
-}
-
-void undo(cairo_t *cr){
-  printf("Undoing to surface: #%d\n",current_surface_index-1);
-
-  if (current_surface_index - 1 >= 0){  
-    cairo_set_operator(cr,CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_surface(cr,surfaces_history[--current_surface_index],0,0);
-    cairo_paint(cr);
-  }else{
-    printf("DUH\n");
-  }
-}
-
-/* Saves a surface in history */
-void save_current_surface_in_history(){
-  printf("Saving surface: #%d\n",current_surface_index+1);
-
-  surfaces_history[++current_surface_index] = current_surface;
-  surfaces_history_size++; 
-}

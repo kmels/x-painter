@@ -32,12 +32,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 
 	   mouseState.coordinates[mouseState.coordinates_size].x = event->x;
 	   mouseState.coordinates[mouseState.coordinates_size].y = event->y;
-	   mouseState.coordinates_size++;	   	   
-
-	   switch(current_tool){
-	      case XPainter_UNDO_TOOL: undo(mouseState.cr); break;		
-	      default: break;
-	   }
+	   mouseState.coordinates_size++;
 	 }
 	   break;
       case GDK_BUTTON_RELEASE: {
@@ -45,7 +40,6 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	mouseState.should_save_change = TRUE;
 
 	switch(current_tool){
-	case XPainter_UNDO_TOOL: mouseState.should_save_change = FALSE; break;
 	case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
 	case XPainter_RECTANGLE_TOOL: rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
 	default : break;

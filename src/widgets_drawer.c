@@ -3,7 +3,7 @@
 #include "types/xpainter_toolitem.h"
 #include "global.h"
 #include "tools.h"
-//#include "types/xpainter_toolitem_id.h"
+#include <string.h> /* memset */
 
 /* This is the GtkItemFactoryEntry structure used to generate new menus.
    Item 1: The menu path. The letter after the underscore indicates an
@@ -15,6 +15,8 @@
    Item 5: The item type, used to define what kind of an item it is.
            Here are the possible values:
 */
+
+struct history canvas_history;
 
 static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo", NULL, NULL, 0, "<Branch>" },
@@ -62,7 +64,7 @@ static XPainterToolItem toolbar_item_icons[] = {
   { "../icons/icon_select.png", "Seleccionar", XPainter_SELECT_TOOL },
   { "../icons/icon_move.png", "Mover", XPainter_MOVE_TOOL },
   { "../icons/icon_undo.png", "Deshacer", XPainter_UNDO_TOOL},
-  { "../icons/icon_redo.png", "Rehacer", XPainter_SAVE_TOOL},
+  { "../icons/icon_redo.png", "Rehacer", XPainter_REDO_TOOL},
   { "../icons/icon_line.png", "Línea", XPainter_LINE_TOOL },
   { "../icons/icon_circle.png", "Círculo", XPainter_CIRCLE_TOOL },
   { "../icons/icon_ellipse.png", "Elipse", XPainter_ELLIPSE_TOOL },
@@ -90,7 +92,19 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   for (i = 0; i < nicons; i++){  
     new_tool_item_icon = gtk_image_new_from_file(toolbar_item_icons[i].path_to_image);    
     new_tool_item = gtk_tool_button_new(new_tool_item_icon,toolbar_item_icons[i].name);
-    g_signal_connect(new_tool_item, "clicked", G_CALLBACK(assign_current_tool), (gpointer) toolbar_item_icons[i].type);   
+    
+    XPainterToolItemType tool_type = toolbar_item_icons[i].type;
+    switch(tool_type){
+    case XPainter_UNDO_TOOL:
+      g_signal_connect(new_tool_item, "clicked", G_CALLBACK(undo), NULL);   
+      break;
+    case XPainter_REDO_TOOL:
+      g_signal_connect(new_tool_item, "clicked", G_CALLBACK(redo), NULL);   
+      break;
+    default: 
+      g_signal_connect(new_tool_item, "clicked", G_CALLBACK(assign_current_tool), (gpointer) tool_type);
+      break;
+    }
     gtk_toolbar_insert(GTK_TOOLBAR(*toolbar), new_tool_item, -1);
     gtk_widget_set_can_focus ((GtkWidget*) new_tool_item, TRUE);
   }
@@ -100,18 +114,20 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
   //is the drawing area initialized?
   if (!canvas_drawn){
     canvas_drawn = TRUE;
+    canvas_history.current_index = -1;
     return FALSE;
   }
   else{
     //it has been initialized, now we are either in a redrawing or a new canvas escenario
     cairo_t *cr = gdk_cairo_create(widget->window);
     
-    if (current_surface_index < 0){ //new canvas escenario, paint it white      
+    //if (current_surface_index < 0){ //new canvas escenario, paint it white
+    if (canvas_history.current_index < 0){ //new canvas escenario, paint it white      
       cairo_set_source_rgb(cr, 255, 255, 255);
       cairo_paint(cr);
       save_current_surface(cairo_get_target(cr));
       save_current_surface_in_history();
-    }else{
+    }else{      
       //redraw
       paint_current_surface_on_canvas(cr);
     }

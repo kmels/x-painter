@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
-#include "mouse_handler.h"
 #include "global.h"
+#include "mouse_handler.h"
 #include "widgets_drawer.h"
 #include "tools.h"
 
@@ -33,8 +33,8 @@ int main( int argc,
   gtk_box_pack_start (GTK_BOX (main_vbox), toolbar, FALSE, TRUE, 0);
   
   /* canvas */  
-  GtkWidget *canvas = gtk_drawing_area_new();
-  current_surface_index = -1;
+  canvas = gtk_drawing_area_new();
+
   //gtk_widget_set_app_paintable(canvas,TRUE);
   gtk_widget_set_has_window(canvas, TRUE);
   gtk_widget_set_size_request (canvas, 500, 500);      

@@ -2,10 +2,10 @@
 #define XPAINTER_TOOLITEM_ID
 
 typedef enum{
-  XPainter_SELECT_TOOL =  1,
-  XPainter_UNDO_TOOL = 2,
-  XPainter_SAVE_TOOL = 3,
-  XPainter_LOAD_TOOL = 4,
+  XPainter_SELECT_TOOL,
+  XPainter_UNDO_TOOL,
+  XPainter_REDO_TOOL,
+  XPainter_LOAD_TOOL,
   XPainter_LINE_TOOL,
   XPainter_CIRCLE_TOOL,
   XPainter_ELLIPSE_TOOL,

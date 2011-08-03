@@ -37,7 +37,6 @@ Specs
 
 TODO 
 ------
- * [#C] Hacer que se haga undo con el botón de Undo, no haciendo click en canvas.
  * [#C] Hacer toolbar con GtkToolPalette
  * [#C] Pintar focus en el current tool
    
