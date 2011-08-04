@@ -4,6 +4,8 @@
 #include "widgets_drawer.h"
 #include "tools.h"
 
+GtkWidget *coordinates_label;
+
 int main( int argc,
           char *argv[] )
 {
@@ -22,7 +24,7 @@ int main( int argc,
   main_vbox = gtk_vbox_new (FALSE, 1);
   gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
   gtk_container_add (GTK_CONTAINER (window), main_vbox);
-  gtk_widget_show (main_vbox);
+  gtk_widget_show (main_vbox);    
   
   /* top menu bar */
   get_main_menu (window, &menubar);
@@ -38,18 +40,21 @@ int main( int argc,
   //gtk_widget_set_app_paintable(canvas,TRUE);
   gtk_widget_set_has_window(canvas, TRUE);
   gtk_widget_set_size_request (canvas, 500, 500);      
-    
+  
   gtk_widget_add_events(canvas, GDK_ALL_EVENTS_MASK);
   g_signal_connect(canvas, "button-press-event", G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_CLICK));
   g_signal_connect(canvas, "button-release-event", G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_CLICK));
-  g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_DRAG));
-  g_signal_connect(canvas, "expose-event",G_CALLBACK(redraw_canvas), GINT_TO_POINTER(MOUSE_DRAG));
-    
-  gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);
-    
-  gtk_widget_show_all (window);    
-  //paint_white_canvas(cairo_get_target(gdk_cairo_create(canvas->window)),gdk_cairo_create(canvas->window));
-  //save_surface_in_history(cairo_get_target(gdk_cairo_create(canvas->window)));
+  g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(update_coordinates_label), NULL);
+  g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_DRAG));  
+  g_signal_connect(canvas, "expose-event",G_CALLBACK(redraw_canvas), GINT_TO_POINTER(MOUSE_DRAG));    
+  gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);    
+  
+  /* coordinates label */  
+  coordinates_label = gtk_label_new("Coordinates");  
+  gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,2);
+  gtk_box_pack_start (GTK_BOX (main_vbox), coordinates_label, FALSE, TRUE, 0);
+  gtk_widget_show_all (window);
+
   gtk_main ();
       
   return(0);

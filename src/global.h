@@ -3,15 +3,19 @@
 
 #include "types/xpainter_toolitem_id.h"
 
+/* GUI */
 GtkWidget *canvas;
+
+/* Functionality */
 XPainterToolItemType current_tool;
 int brush_width;
 
-//cairo_surface_t *surfaces_history[100];
 cairo_surface_t *current_surface;
-//int current_surface_index;
-//int surfaces_history_size;
 
+/* Dirty variables */
+gboolean canvas_drawn;
+
+/* Types */
 struct history{
   cairo_surface_t *surfaces[100];
   int current_index;
@@ -19,8 +23,6 @@ struct history{
 };
 
 extern struct history canvas_history;
-
-gboolean canvas_drawn;
 
 void assign_current_tool(GtkWidget *widget, gpointer data);
 void undo(GtkWidget *widget, gpointer data);

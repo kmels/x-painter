@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include "global.h"
-//#include <cstdlib>
+#include "mouse_handler.h"
 #include <stdlib.h>
 
 /* paints a single pixel in coordinate x,y*/
@@ -12,6 +12,7 @@ inline void put_pixel(cairo_t *cr,double x, double y){
 
 /* Line, draws a line from x1,y1 to coordinate x2,y2 using Bresenham's algorithm*/
 inline void line(cairo_t *cr, double x1, double y1, double x2, double y2){
+  //printf("line: %f,%f -> %f,%f\n",x1,y1,x2,y2);
   gboolean steep = FALSE;
   double tmp;
   if (abs(y2-y1) > abs(x2 - x1)){
@@ -75,3 +76,38 @@ void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   line(cr,x1,y2,x1,y1);
 }
 
+
+void flood_fill(cairo_t *cr, double x, double y){
+  
+  cairo_surface_t *surface = cairo_get_target(cr);
+  //char* image = cairo_image_surface_get_data(surface);
+  
+  printf("FORMAT: %d\n",cairo_image_surface_get_format(surface));
+}
+
+/* returns true if x,y belongs to the line drawn from x1,y1 to x2,y2 */
+gboolean coordinate_belongs_to_line(double x,double y,double x1,double y1,double x2,double y2){
+//gboolean coordinate_belongs_to_line(x,y,x1,y1,x2,y2){
+  double dy = y2 - y1;
+  double dx = x2 - x1;
+  return dy*(x-x1) - dx*y + dx*y1 == 0 ? TRUE : FALSE;
+}
+
+/* draws a line from the current coordinate of the mouse to the first one, in case the polygon tool is the current 
+   returns TRUE iff it the polygon is finally drawn.
+   x,y represent the current position
+*/
+gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y){
+  if (current_tool != XPainter_POLYGON_TOOL || mouseState->coordinates_size < 2) //if current tool != polygon or one only one line has been drawn.
+    return FALSE;
+  
+  int ncoordinates = mouseState->coordinates_size;
+  
+  //line from the last saved coordinate to the current position
+  line(mouseState->cr,mouseState->coordinates[ncoordinates-1].x,mouseState->coordinates[ncoordinates-1].y,x,y);
+  //line from the current position to the first coordinate
+  line(mouseState->cr,x,y,mouseState->coordinates[0].x,mouseState->coordinates[0].y);
+
+  mouseState->ispainting = FALSE;
+  return TRUE;
+}

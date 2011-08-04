@@ -5,7 +5,7 @@ X-Painter is Windows Paint-like application written in C using GTK+ and Cairo fo
 
 How to compile and run (dependency: gtk)
 =============
-gcc -Wall main.c widgets_drawer.c global.c mouse_handler.c tools.c -o main.o `pkg-config --cflags libgnomecanvas-2.0 --libs gtk+-2.0` && ./main.o
+gcc -Wall -D_GNU_SOURCE main.c widgets_drawer.c global.c mouse_handler.c tools.c -o main.o `pkg-config --cflags libgnomecanvas-2.0 --libs gtk+-2.0` && ./main.o
 
 Extra
 =============
@@ -18,7 +18,7 @@ Ideas Extra
 Specs 
 -----------
 - Cut, Copy Paste
-- Undo
+- Undo - DONE
 - Save
 - Load
 - Circulo,Elipses, rectangulos, poligono (fill)

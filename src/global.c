@@ -29,7 +29,7 @@ void redo(GtkWidget *widget, gpointer data){
 /* Saves a surface, tipically called before drawing anything new, so we can simulate drawing on it*/
 void save_current_surface(cairo_surface_t *surface){
   cairo_surface_t *surface_to_save = cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR, 1200, 1200);
-  cairo_t *new_cr = cairo_create(surface_to_save);   
+  cairo_t *new_cr = cairo_create(surface_to_save);
   cairo_set_source_surface(new_cr,surface,0,0);
   cairo_paint(new_cr);
   current_surface = surface_to_save;

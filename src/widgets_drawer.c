@@ -2,8 +2,11 @@
 #include <strings.h>
 #include "types/xpainter_toolitem.h"
 #include "global.h"
+#include "mouse_handler.h"
 #include "tools.h"
 #include <string.h> /* memset */
+//#define _GNU_SOURCE
+#include <stdio.h>
 
 /* This is the GtkItemFactoryEntry structure used to generate new menus.
    Item 1: The menu path. The letter after the underscore indicates an
@@ -17,6 +20,7 @@
 */
 
 struct history canvas_history;
+extern GtkLabel *coordinates_label;
 
 static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo", NULL, NULL, 0, "<Branch>" },
@@ -133,4 +137,12 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
     }
     return TRUE;
   }  
+}
+
+gboolean update_coordinates_label(GtkWidget *widget, void *e, gpointer *t){  
+  GdkEventMotion *event = (GdkEventMotion*) e;
+  char *s = NULL;
+  asprintf (&s, "x,y = %f,%f", event->x,event->y);
+  gtk_label_set_text(coordinates_label,s);    
+  return FALSE; //propagate next events
 }
