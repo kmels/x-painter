@@ -32,7 +32,6 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	save_current_surface(cairo_get_target(mouseState.cr));
 	cairo_set_source_rgb(mouseState.cr, 0, 0, 0);
 	cairo_set_source_rgb(mouseState.cr, 0.3, 0.4, 0.6);
-	cairo_set_line_width(mouseState.cr, 1);	
 	save_coordinates(event->x,event->y);
       }
     }

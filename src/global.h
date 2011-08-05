@@ -8,7 +8,7 @@ GtkWidget *canvas;
 
 /* Functionality */
 XPainterToolItemType current_tool;
-int brush_width;
+int line_width;
 
 cairo_surface_t *current_surface;
 

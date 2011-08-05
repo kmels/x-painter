@@ -10,6 +10,7 @@ gcc -Wall -D_GNU_SOURCE main.c widgets_drawer.c global.c mouse_handler.c tools.c
 Extra
 =============
  * Dibujar líneas en __tiempo real_
+ * Ancho de pixel
 
 Ideas Extra
 ------------

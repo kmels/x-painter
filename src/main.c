@@ -24,7 +24,7 @@ int main( int argc,
   main_vbox = gtk_vbox_new (FALSE, 1);
   gtk_container_border_width (GTK_CONTAINER (main_vbox), 1);
   gtk_container_add (GTK_CONTAINER (window), main_vbox);
-  gtk_widget_show (main_vbox);    
+  gtk_widget_show (main_vbox);
   
   /* top menu bar */
   get_main_menu (window, &menubar);
@@ -50,10 +50,19 @@ int main( int argc,
   gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);    
   
   /* coordinates label */  
+  GtkWidget *bottom_hbox = gtk_hbox_new(FALSE,1);
+  //gtk_container_border_width (GTK_CONTAINER (bottom_hbox), 1);
+  //gtk_container_add (GTK_CONTAINER (window), bottom_hbox);
+  gtk_widget_show (bottom_hbox);
+  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);      
   coordinates_label = gtk_label_new("Coordinates");  
   gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,2);
-  gtk_box_pack_start (GTK_BOX (main_vbox), coordinates_label, FALSE, TRUE, 0);
-  gtk_widget_show_all (window);
+
+  gtk_box_pack_start (GTK_BOX (bottom_hbox), coordinates_label, FALSE, TRUE, 0);
+    
+  add_line_width_widget_to(GTK_CONTAINER(bottom_hbox));
+
+  gtk_widget_show_all (window);    
 
   gtk_main ();
       

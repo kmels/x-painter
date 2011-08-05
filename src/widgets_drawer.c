@@ -124,7 +124,8 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
   else{
     //it has been initialized, now we are either in a redrawing or a new canvas escenario
     cairo_t *cr = gdk_cairo_create(widget->window);
-    
+    line_width = 1;
+
     //if (current_surface_index < 0){ //new canvas escenario, paint it white
     if (canvas_history.current_index < 0){ //new canvas escenario, paint it white      
       cairo_set_source_rgb(cr, 255, 255, 255);
@@ -146,3 +147,22 @@ gboolean update_coordinates_label(GtkWidget *widget, void *e, gpointer *t){
   gtk_label_set_text(coordinates_label,s);    
   return FALSE; //propagate next events
 }
+
+void adjust_line_width(GtkRange *range,gpointer user_data){  
+  line_width = (int) gtk_range_get_value(range);
+}
+
+void add_line_width_widget_to(GtkContainer *box){
+  /* add label */
+  GtkWidget *line_width_label = gtk_label_new("Ancho de pixel:");  
+  gtk_misc_set_alignment(GTK_MISC(line_width_label),0,2);  
+  
+  GtkWidget *line_width_widget;
+  line_width_widget = gtk_hscale_new_with_range(1,10,1);
+  gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 200, 45);  
+  g_signal_connect(line_width_widget, "value-changed",G_CALLBACK(adjust_line_width), NULL);
+  
+  gtk_box_pack_end (GTK_BOX (box), line_width_widget, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), line_width_label, FALSE, TRUE, 0);
+}
+

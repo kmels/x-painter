@@ -7,7 +7,8 @@
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel(cairo_t *cr,double x, double y){
   cairo_move_to(cr,x,y);
-  cairo_rectangle(cr,x,y,1,1);
+  //cairo_rectangle(cr,x,y,1,1);
+  cairo_rectangle(cr,x,y,line_width,line_width);
   cairo_fill(cr);
 }
 
