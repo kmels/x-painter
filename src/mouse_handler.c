@@ -22,7 +22,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
     GdkEventButton *event = (GdkEventButton*) e;
     switch(event->type) {
     case GDK_BUTTON_PRESS: {
-      //printf("zz\n");
+
       mouseState.ispainting = TRUE;
       mouseState.cr = gdk_cairo_create(widget->window);
 	
@@ -31,8 +31,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	finish_polygon(&mouseState,event->x,event->y);
       }else if (event->button==1){ //left click	
 	save_current_surface(cairo_get_target(mouseState.cr));
-	cairo_set_source_rgb(mouseState.cr, 0, 0, 0);
-	cairo_set_source_rgb(mouseState.cr, 0.3, 0.4, 0.6);
+	cairo_set_source_rgb(mouseState.cr,(double)color1.red / 65535, (double)color1.green / 65535, (double)color1.blue / 65535);
 	save_coordinates(event->x,event->y);
       }
 

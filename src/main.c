@@ -51,17 +51,16 @@ int main( int argc,
   
   /* coordinates label */  
   GtkWidget *bottom_hbox = gtk_hbox_new(FALSE,1);
-  //gtk_container_border_width (GTK_CONTAINER (bottom_hbox), 1);
-  //gtk_container_add (GTK_CONTAINER (window), bottom_hbox);
   gtk_widget_show (bottom_hbox);
-  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);      
+  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);
   coordinates_label = gtk_label_new("Coordinates");  
   gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,2);
 
   gtk_box_pack_start (GTK_BOX (bottom_hbox), coordinates_label, FALSE, TRUE, 0);
     
   add_line_width_widget_to(GTK_CONTAINER(bottom_hbox));
-
+  add_color_widgets_to(GTK_CONTAINER(bottom_hbox));
+  
   gtk_widget_show_all (window);    
 
   gtk_main ();

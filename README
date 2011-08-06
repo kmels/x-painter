@@ -24,10 +24,10 @@ Specs
 - Save
 - Load 
 - Circulo,Elipses, rectangulos, poligono (fill)
-- Línea – 3 grosores
+- Línea – 3 grosores - DONE
 - Flood fill - Paterns
 - Texto
-- Get color
+- Get color -- DONE
 - Dibujar encima el círculo, cuadrado, etc
 - Spray
 - Borrador - MARCADOR

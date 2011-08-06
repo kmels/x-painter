@@ -9,6 +9,7 @@ GtkWidget *canvas;
 /* Functionality */
 XPainterToolItemType current_tool;
 int line_width;
+GdkColor color1, color2;
 
 cairo_surface_t *current_surface;
 

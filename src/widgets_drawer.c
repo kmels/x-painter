@@ -124,10 +124,10 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
   else{
     //it has been initialized, now we are either in a redrawing or a new canvas escenario
     cairo_t *cr = gdk_cairo_create(widget->window);
-    line_width = 1;
 
     //if (current_surface_index < 0){ //new canvas escenario, paint it white
-    if (canvas_history.current_index < 0){ //new canvas escenario, paint it white      
+    if (canvas_history.current_index < 0){ //new canvas escenario, paint it white
+      line_width = 1;
       cairo_set_source_rgb(cr, 255, 255, 255);
       cairo_paint(cr);
       save_current_surface(cairo_get_target(cr));
@@ -159,10 +159,60 @@ void add_line_width_widget_to(GtkContainer *box){
   
   GtkWidget *line_width_widget;
   line_width_widget = gtk_hscale_new_with_range(1,10,1);
-  gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 200, 45);  
+
+  gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 200, 45);
+  
+  /*int i;
+  for (i = 2; i <= 10; i++){
+    gtk_scale_add_mark(GTK_SCALE(line_width_widget),(double)i,GTK_POS_TOP,"5");
+    }*/
+
   g_signal_connect(line_width_widget, "value-changed",G_CALLBACK(adjust_line_width), NULL);
   
   gtk_box_pack_end (GTK_BOX (box), line_width_widget, FALSE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX (box), line_width_label, FALSE, TRUE, 0);
 }
 
+void adjust_color(GtkColorButton *widget,gpointer data){  
+  int color_number = GPOINTER_TO_INT(data);
+
+  if (color_number==1)
+    gtk_color_button_get_color(widget,&color1);
+  else
+    gtk_color_button_get_color(widget,&color2);
+}
+
+void add_color_widgets_to(GtkContainer *box){
+  /* color 1 */
+  GtkWidget *color1_label = gtk_label_new("Color 1:");  
+  gtk_misc_set_alignment(GTK_MISC(color1_label),0,2);  
+  
+  //initial colors
+  color1.red = 65535;
+  color1.blue = 51143;
+
+  color2.green = 65535;
+  color2.blue = 65535;
+
+  GtkWidget *color1_widget = gtk_color_button_new_with_color(&color1);
+  g_signal_connect(color1_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(1));
+  
+  
+  /* color 2 */
+  GtkWidget *color2_label = gtk_label_new("Color 2:");  
+  gtk_misc_set_alignment(GTK_MISC(color2_label),0,2);  
+  
+  GtkWidget *color2_widget = gtk_color_button_new_with_color(&color2);  
+  g_signal_connect(color2_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(2));  
+
+  /* add color 2 */
+  gtk_box_pack_end (GTK_BOX (box), color2_widget, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), color2_label, FALSE, TRUE, 0);
+
+  /* add color 1 */
+  gtk_box_pack_end (GTK_BOX (box), color1_widget, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), color1_label, FALSE, TRUE, 0);
+
+
+  
+}
