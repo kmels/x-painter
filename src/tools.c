@@ -12,6 +12,13 @@ inline void put_pixel(cairo_t *cr,double x, double y){
   cairo_fill(cr);
 }
 
+/* paints a single pixel in coordinate x,y*/
+inline void put_pixel_width_1(cairo_t *cr,double x, double y){
+  cairo_move_to(cr,x,y);
+  cairo_rectangle(cr,x,y,1,1);
+  cairo_fill(cr);
+}
+
 /* Line, draws a line from x1,y1 to coordinate x2,y2 using Bresenham's algorithm*/
 inline void line(cairo_t *cr, double x1, double y1, double x2, double y2){
   //printf("line: %f,%f -> %f,%f\n",x1,y1,x2,y2);
@@ -78,31 +85,46 @@ void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   line(cr,x1,y2,x1,y1);
 }
 
-void spray(cairo_t *cr, double x, double y){
-  put_pixel(cr,x,y);
-  put_pixel(cr,x-2*line_width,y);
-  put_pixel(cr,x+2*line_width,y);
+/* */
+void spray(double x, double y,mouseStateStruct *mouseState){
+  int radius = 25*line_width;
+  int radiusSquared = pow(radius,2);
 
-  put_pixel(cr,x-line_width,y-line_width);
-  put_pixel(cr,x+line_width,y-line_width);  
-  put_pixel(cr,x-line_width,y+line_width);
-  put_pixel(cr,x+line_width,y+line_width);
+  int pixel_i;
+  double random_x;
+  double random_y;
+  int sign_x;
+  int sign_y;
+
+  srand (time(NULL));
   
-  put_pixel(cr,x,y+2*line_width);
-  put_pixel(cr,x,y-2*line_width);
-
-  put_pixel(cr,x-line_width,y);
-  put_pixel(cr,x-line_width,y-2*line_width);
-  put_pixel(cr,x+line_width,y);
-
-  put_pixel(cr,x+line_width,y);
-  put_pixel(cr,x+line_width,y);
-  put_pixel(cr,x+line_width,y);
-
-  /*put_pixel(cr,x,y-3*line_width);
-  put_pixel(cr,x-2*line_width,y+line_width);
-  put_pixel(cr,x-1,y+2*line_width);
-  put_pixel(cr,x,y+line_width);*/
+  //while (mouseState->ispainting){
+    for(pixel_i = 0; pixel_i < 100*line_width; pixel_i++){
+      random_x = rand() % radius;
+      random_y = rand() % radius;
+      
+      //printf("rx,ry = %f,%f\n",random_x,random_y);
+      
+      //is (random_x,random_y) inside the circle?    
+      if ((pow(random_x,2) + pow(random_y,2)) <= radiusSquared){ //it is
+	if ((rand() % 1)<1)
+	  sign_x = -1;
+	else
+	  sign_x = 1;
+	
+	if ((rand() %1)<1)
+	  sign_y = -1;
+	else
+	  sign_y = 1;
+      }
+      
+      put_pixel_width_1(mouseState->cr,x+random_x*sign_x,y+random_y*sign_y);
+    }
+    
+    //printf("sleeping\n");
+    //sleep(1);
+    //printf("waking\n");
+    //}  
 }
 
 void flood_fill(cairo_t *cr, double x, double y){

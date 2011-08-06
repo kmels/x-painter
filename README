@@ -11,6 +11,7 @@ Extra
 =============
  * Dibujar líneas en __tiempo real_
  * Ancho de pixel
+ * Memoria para 100 canvases (Undo y Redo)
 
 Ideas Extra
 ------------
@@ -21,7 +22,7 @@ Specs
 - Cut, Copy Paste
 - Undo - DONE
 - Save
-- Load
+- Load 
 - Circulo,Elipses, rectangulos, poligono (fill)
 - Línea – 3 grosores
 - Flood fill - Paterns
@@ -31,7 +32,7 @@ Specs
 - Spray
 - Borrador - MARCADOR
 - Bmp
-- New
+- New 
 - 2 patrones de llenado
 - Mouseb
 - ASM = Put Char - Put Pixel - Get Color - Set/unset Video
