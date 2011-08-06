@@ -78,6 +78,32 @@ void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   line(cr,x1,y2,x1,y1);
 }
 
+void spray(cairo_t *cr, double x, double y){
+  put_pixel(cr,x,y);
+  put_pixel(cr,x-2*line_width,y);
+  put_pixel(cr,x+2*line_width,y);
+
+  put_pixel(cr,x-line_width,y-line_width);
+  put_pixel(cr,x+line_width,y-line_width);  
+  put_pixel(cr,x-line_width,y+line_width);
+  put_pixel(cr,x+line_width,y+line_width);
+  
+  put_pixel(cr,x,y+2*line_width);
+  put_pixel(cr,x,y-2*line_width);
+
+  put_pixel(cr,x-line_width,y);
+  put_pixel(cr,x-line_width,y-2*line_width);
+  put_pixel(cr,x+line_width,y);
+
+  put_pixel(cr,x+line_width,y);
+  put_pixel(cr,x+line_width,y);
+  put_pixel(cr,x+line_width,y);
+
+  /*put_pixel(cr,x,y-3*line_width);
+  put_pixel(cr,x-2*line_width,y+line_width);
+  put_pixel(cr,x-1,y+2*line_width);
+  put_pixel(cr,x,y+line_width);*/
+}
 
 void flood_fill(cairo_t *cr, double x, double y){
   

@@ -90,6 +90,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       
     switch(current_tool){
     case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
+    case XPainter_SPRAY_TOOL: spray(mouseState.cr, event->x, event->y); break; 
     case XPainter_LINE_TOOL: {
       mouseState.save_dragging = FALSE;
       paint_current_surface_on_canvas(mouseState.cr);	
