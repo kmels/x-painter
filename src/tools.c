@@ -380,3 +380,48 @@ inline void dragged_eraser(cairo_t *cr,double x, double y,double x2, double y2){
   cairo_set_source_rgb(cr,1,1,1);
   line(cr,x,y,x2,y2);
 }
+
+
+inline void put_ellipse_pixels(cairo_t *cr,double cx, double cy,double x,double y){
+  put_pixel(cr,cx+x,cy+y);
+  put_pixel(cr,cx-x,cy+y);
+  put_pixel(cr,cx-x,cy-y);
+  put_pixel(cr,cx+x,cy-y);  
+}
+
+/* John Kennedy */
+void ellipse(cairo_t *cr, double cenx, double ceny, double current_x, double current_y){
+  double a = abs(current_x - cenx);
+  double b = abs(current_y - ceny);
+  double Pk,x,y;
+
+  Pk=b*b-b*a*a+0.25*a*a; x=0; y=b;
+  
+  put_ellipse_pixels(cr,cenx,ceny,x,y);
+  while (2*x*b*b <= 2*y*a*a){
+    if (Pk<0){
+      x++;
+      Pk=Pk+2*x*b*b+3*b*b;
+    }
+    else {
+      x++; y--;
+      Pk=Pk+2*x*b*b+3*b*b-2*y*a*a+2*a*a;
+    }
+    put_ellipse_pixels(cr,cenx,ceny,x,y);    
+  }
+
+  Pk=(x+0.5)*(x+0.5)*b*b+(y-1)*(y-1)*a*a-a*a*b*b;
+  put_ellipse_pixels(cr,cenx,ceny,x,y);
+  while (y>0){
+    if (Pk>0){
+      y--;
+      Pk=Pk-2*y*a*a+3*a*a;
+    }
+    else{
+      x++;
+      y--;
+      Pk=Pk-2*y*a*a+3*a*a+2*x*b*b+2*b*b;
+    }
+    put_ellipse_pixels(cr,cenx,ceny,x,y);
+  }
+}

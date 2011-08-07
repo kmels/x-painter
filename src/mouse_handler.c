@@ -138,6 +138,11 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       paint_current_surface_on_canvas(mouseState.cr);	
       circle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
     } break;
+    case XPainter_ELLIPSE_TOOL:{
+      mouseState.save_dragging = FALSE;
+      paint_current_surface_on_canvas(mouseState.cr);	
+      ellipse(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+    } break;
     case XPainter_RECTANGLE_TOOL: {	
       mouseState.save_dragging = FALSE;
       paint_current_surface_on_canvas(mouseState.cr);	

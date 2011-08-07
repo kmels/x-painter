@@ -59,6 +59,7 @@ TODO
  * [#A] Dibujar elipse filled
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
+ * [#B] Arreglar bug cuando selection se sale del drawing area
    
 [#A] = must
 [#B] = falla

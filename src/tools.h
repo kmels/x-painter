@@ -15,4 +15,5 @@ void move(mouseStateStruct *mouseState, double x, double y);
 gboolean click_is_within_selection(double x, double y);
 inline void single_eraser(cairo_t *cr,double x, double y);
 inline void dragged_eraser(cairo_t *cr,double x, double y,double x2, double y2);
+void ellipse(cairo_t *cr, double cenx, double ceny, double current_x, double current_y);
 #endif
