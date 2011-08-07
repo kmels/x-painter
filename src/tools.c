@@ -261,41 +261,6 @@ gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y){
   return TRUE;
 }
 
-/* Draws a circle using the midpoint algorithm */
-gboolean circle(cairo_t *cr, double x0, double y0, double xf, double yf){
-  double radius = sqrt(pow((x0-xf),2) + pow((yf-y0),2));
-  double f = 1 - radius;
-  double ddF_x = 1;
-  double ddF_y = -2 * radius;
-  double x = 0;
-  double y = radius;
- 
-  put_pixel(cr,x0, y0 + radius);
-  put_pixel(cr,x0, y0 - radius);
-  put_pixel(cr,x0 + radius, y0);
-  put_pixel(cr,x0 - radius, y0);
- 
-  while(x < y){
-    if(f >= 0){
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f += ddF_x;    
-    put_pixel(cr,x0 + x, y0 + y);
-    put_pixel(cr,x0 - x, y0 + y);
-    put_pixel(cr,x0 + x, y0 - y);
-    put_pixel(cr,x0 - x, y0 - y);
-    put_pixel(cr,x0 + y, y0 + x);
-    put_pixel(cr,x0 - y, y0 + x);
-    put_pixel(cr,x0 + y, y0 - x);
-    put_pixel(cr,x0 - y, y0 - x);
-  }
-  return TRUE;
-}
-
 void mark_selection(cairo_t *cr, double x1, double y1, double x2, double y2){
   cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 1);
 
@@ -394,7 +359,7 @@ void ellipse(cairo_t *cr, double cenx, double ceny, double current_x, double cur
   double a = abs(current_x - cenx);
   double b = abs(current_y - ceny);
   double Pk,x,y;
-
+  
   Pk=b*b-b*a*a+0.25*a*a; x=0; y=b;
   
   put_ellipse_pixels(cr,cenx,ceny,x,y);
@@ -424,4 +389,39 @@ void ellipse(cairo_t *cr, double cenx, double ceny, double current_x, double cur
     }
     put_ellipse_pixels(cr,cenx,ceny,x,y);
   }
+}
+
+/* Draws a circle using the midpoint algorithm */
+gboolean circle(cairo_t *cr, double x0, double y0, double xf, double yf){
+  double radius = sqrt(pow((x0-xf),2) + pow((yf-y0),2));
+  double f = 1 - radius;
+  double ddF_x = 1;
+  double ddF_y = -2 * radius;
+  double x = 0;
+  double y = radius;
+ 
+  put_pixel(cr,x0, y0 + radius);
+  put_pixel(cr,x0, y0 - radius);
+  put_pixel(cr,x0 + radius, y0);
+  put_pixel(cr,x0 - radius, y0);
+ 
+  while(x < y){
+    if(f >= 0){
+      y--;
+      ddF_y += 2;
+      f += ddF_y;
+    }
+    x++;
+    ddF_x += 2;
+    f += ddF_x;    
+    put_pixel(cr,x0 + x, y0 + y);
+    put_pixel(cr,x0 - x, y0 + y);
+    put_pixel(cr,x0 + x, y0 - y);
+    put_pixel(cr,x0 - x, y0 - y);
+    put_pixel(cr,x0 + y, y0 + x);
+    put_pixel(cr,x0 - y, y0 + x);
+    put_pixel(cr,x0 + y, y0 - x);
+    put_pixel(cr,x0 - y, y0 - x);
+  }
+  return TRUE;
 }
