@@ -40,6 +40,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       
       switch(current_tool){
       case XPainter_MOVE_TOOL: remove_selection = !click_is_within_selection(event->x,event->y); break;
+      case XPainter_ERASER_TOOL: single_eraser(mouseState.cr, event->x, event->y); break;
       case XPainter_SPRAY_TOOL: spray(event->x, event->y,&mouseState); break;
       default: break;
       }
@@ -60,7 +61,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       }break;
       case XPainter_MOVE_TOOL:{
 	selection_is_on = FALSE;
-      }break;
+      }break;	
       case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
       case XPainter_RECTANGLE_TOOL: rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
       case XPainter_POLYGON_TOOL: {
@@ -120,6 +121,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       move(&mouseState,event->x,event->y);
     } break;
     case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
+    case XPainter_ERASER_TOOL: dragged_eraser(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
     case XPainter_SPRAY_TOOL: spray(event->x, event->y,&mouseState); break; 
     case XPainter_LINE_TOOL: {
       mouseState.save_dragging = FALSE;

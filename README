@@ -30,7 +30,7 @@ Specs
 - Get color -- DONE
 - Dibujar encima el círculo, cuadrado, etc
 - Spray -- DONE
-- Borrador - MARCADOR
+- Borrador - DONE
 - Bmp
 - New 
 - 2 patrones de llenado
@@ -51,7 +51,6 @@ TODO
  * [#A] Open
  * [#A] New
  * [#B] Fix spray
- * [#A] Borrador
  * [#A] Dibujar circulo filled
  * [#A] Dibuajr cuadrado filled
  * [#A] Elipse

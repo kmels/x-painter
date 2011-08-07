@@ -369,3 +369,14 @@ gboolean click_is_within_selection(double x, double y){
   
   return FALSE;
 }
+
+inline void single_eraser(cairo_t *cr,double x, double y){
+  cairo_set_source_rgb(cr,1,1,1);  
+  cairo_rectangle(cr,x,y,line_width,line_width);
+  cairo_fill(cr);
+}
+
+inline void dragged_eraser(cairo_t *cr,double x, double y,double x2, double y2){
+  cairo_set_source_rgb(cr,1,1,1);
+  line(cr,x,y,x2,y2);
+}

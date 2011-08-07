@@ -13,4 +13,6 @@ void mark_selection(cairo_t *cr, double x1, double y1, double x2, double y2);
 void save_selection(double x1, double y1, double x2, double y2);
 void move(mouseStateStruct *mouseState, double x, double y);
 gboolean click_is_within_selection(double x, double y);
+inline void single_eraser(cairo_t *cr,double x, double y);
+inline void dragged_eraser(cairo_t *cr,double x, double y,double x2, double y2);
 #endif
