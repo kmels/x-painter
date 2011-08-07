@@ -79,7 +79,7 @@ static XPainterToolItem toolbar_item_icons[] = {
   { "../icons/icon_eraser.png", "Borrador", XPainter_ERASER_TOOL },
   { "../icons/icon_spray.png", "Spray", XPainter_SPRAY_TOOL },
   { "../icons/icon_brush.png", "Brush", XPainter_BRUSH_TOOL},
-  { "../icons/icon_zoom_ant.png", "Lapicero", XPainter_PEN_TOOL},
+  { "../icons/icon_pencil.png", "Lapicero", XPainter_PEN_TOOL},
   { "../icons/icon_zoom.png", "Zoom", XPainter_ZOOM_TOOL}
 };
 
@@ -155,18 +155,20 @@ void adjust_line_width(GtkRange *range,gpointer user_data){
 void add_line_width_widget_to(GtkContainer *box){
   /* add label */
   GtkWidget *line_width_label = gtk_label_new("Ancho de pixel:");  
-  gtk_misc_set_alignment(GTK_MISC(line_width_label),0,2);  
+  gtk_misc_set_alignment(GTK_MISC(line_width_label),0,0.5);  
   
   GtkWidget *line_width_widget;
   line_width_widget = gtk_hscale_new_with_range(1,10,1);
 
   gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 200, 45);
   
-  /*int i;
-  for (i = 2; i <= 10; i++){
-    gtk_scale_add_mark(GTK_SCALE(line_width_widget),(double)i,GTK_POS_TOP,"5");
-    }*/
-
+  int i;
+  char *s = NULL;  
+  for (i = 0; i <= 10; i++){
+    asprintf (&s, "%d", i);
+    gtk_scale_add_mark(GTK_SCALE(line_width_widget),(double)i,GTK_POS_LEFT,s);
+  }
+  
   g_signal_connect(line_width_widget, "value-changed",G_CALLBACK(adjust_line_width), NULL);
   
   gtk_box_pack_end (GTK_BOX (box), line_width_widget, FALSE, TRUE, 0);
@@ -203,8 +205,8 @@ void adjust_color(GtkColorButton *widget,gpointer data){
 
 void add_color_widgets_to(GtkContainer *box){
   /* color 1 */
-  GtkWidget *color1_label = gtk_label_new("Color 1:");  
-  gtk_misc_set_alignment(GTK_MISC(color1_label),0,2);  
+  GtkWidget *color1_label = gtk_label_new("Color 1 ");  
+  gtk_misc_set_alignment(GTK_MISC(color1_label),0,0.5);  
   
   //initial colors  
   color1.red = 65535;
@@ -220,8 +222,8 @@ void add_color_widgets_to(GtkContainer *box){
   g_signal_connect(color1_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(1));
     
   /* color 2 */
-  GtkWidget *color2_label = gtk_label_new("Color 2:");  
-  gtk_misc_set_alignment(GTK_MISC(color2_label),0,2);  
+  GtkWidget *color2_label = gtk_label_new("Color 2 ");  
+  gtk_misc_set_alignment(GTK_MISC(color2_label),0,0.5);  
   
   GtkWidget *color2_widget = gtk_color_button_new_with_color(&gdk_color2);  
   g_signal_connect(color2_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(2));  
