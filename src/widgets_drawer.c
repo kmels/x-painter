@@ -20,7 +20,7 @@
 */
 
 struct history canvas_history;
-extern GtkLabel *coordinates_label;
+GtkWidget *coordinates_label;
 
 static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo", NULL, NULL, 0, "<Branch>" },
@@ -144,7 +144,7 @@ gboolean update_coordinates_label(GtkWidget *widget, void *e, gpointer *t){
   GdkEventMotion *event = (GdkEventMotion*) e;
   char *s = NULL;
   asprintf (&s, "x,y = %f,%f", event->x,event->y);
-  gtk_label_set_text(coordinates_label,s);    
+  gtk_label_set_text(GTK_LABEL(coordinates_label),s);    
   return FALSE; //propagate next events
 }
 
@@ -154,7 +154,7 @@ void adjust_line_width(GtkRange *range,gpointer user_data){
 
 void add_line_width_widget_to(GtkContainer *box){
   /* add label */
-  GtkWidget *line_width_label = gtk_label_new("Ancho de pixel:");  
+  GtkWidget *line_width_label = gtk_label_new("Ancho de pixel");  
   gtk_misc_set_alignment(GTK_MISC(line_width_label),0,0.5);  
   
   GtkWidget *line_width_widget;
@@ -171,8 +171,8 @@ void add_line_width_widget_to(GtkContainer *box){
   
   g_signal_connect(line_width_widget, "value-changed",G_CALLBACK(adjust_line_width), NULL);
   
-  gtk_box_pack_end (GTK_BOX (box), line_width_widget, FALSE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX (box), line_width_label, FALSE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (box), line_width_widget, FALSE, TRUE, 0);  
 }
 
 GdkColor get_gdk_color_from_xpainter_color(XPainterColor color){
@@ -206,7 +206,7 @@ void adjust_color(GtkColorButton *widget,gpointer data){
 void add_color_widgets_to(GtkContainer *box){
   /* color 1 */
   GtkWidget *color1_label = gtk_label_new("Color 1 ");  
-  gtk_misc_set_alignment(GTK_MISC(color1_label),0,0.5);  
+  gtk_misc_set_alignment(GTK_MISC(color1_label),0,0.5);
   
   //initial colors  
   color1.red = 65535;
@@ -229,13 +229,28 @@ void add_color_widgets_to(GtkContainer *box){
   g_signal_connect(color2_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(2));  
 
   /* add color 2 */
-  gtk_box_pack_end (GTK_BOX (box), color2_widget, FALSE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX (box), color2_label, FALSE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (box), color2_widget, FALSE, TRUE, 0);  
+  
+  add_vertical_separator_to(box);
 
   /* add color 1 */
-  gtk_box_pack_end (GTK_BOX (box), color1_widget, FALSE, TRUE, 0);
-  gtk_box_pack_end(GTK_BOX (box), color1_label, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), color1_label, FALSE, TRUE, 0);  
+  gtk_box_pack_end (GTK_BOX (box), color1_widget, FALSE, TRUE, 0);  
+}
 
+void add_fill_widget_to(GtkContainer *box){
+  GtkWidget *fill_check_button_widget = gtk_check_button_new_with_label("Llenar figura");
+  gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);
+}
 
-  
+void add_vertical_separator_to(GtkContainer *box){
+  GtkWidget *separator = gtk_vseparator_new();
+  gtk_box_pack_end(GTK_BOX (box), separator, FALSE, TRUE, 0);
+}
+
+void add_coordinates_label_to(GtkContainer *box){
+  coordinates_label = gtk_label_new("");  
+  gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,0.5);
+  gtk_box_pack_start(GTK_BOX (box), GTK_WIDGET(coordinates_label), FALSE, TRUE, 0);
 }

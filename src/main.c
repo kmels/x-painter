@@ -4,7 +4,7 @@
 #include "widgets_drawer.h"
 #include "tools.h"
 
-GtkWidget *coordinates_label;
+//GtkWidget *coordinates_label;
 
 int main( int argc,
           char *argv[] )
@@ -31,11 +31,11 @@ int main( int argc,
   gtk_box_pack_start (GTK_BOX (main_vbox), menubar, FALSE, TRUE, 0);
   
   /* toolbar */
-  get_toolbar(window, &toolbar);    
+  get_toolbar(window, &toolbar);
   
   /* canvas */  
   canvas = gtk_drawing_area_new();
-
+  
   //gtk_widget_set_app_paintable(canvas,TRUE);
   gtk_widget_set_has_window(canvas, TRUE);
   gtk_widget_set_size_request (canvas, 500, 500);      
@@ -50,19 +50,21 @@ int main( int argc,
   /* coordinates label */  
   GtkWidget *bottom_hbox = gtk_hbox_new(FALSE,1);
   gtk_widget_show (bottom_hbox);  
-  coordinates_label = gtk_label_new("Coordinates");  
-  gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,2);
 
   
   gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);    
   gtk_box_pack_start (GTK_BOX (main_vbox), toolbar, FALSE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);  
-  gtk_box_pack_start (GTK_BOX (bottom_hbox), coordinates_label, FALSE, TRUE, 0);
-    
+  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);
+      
   add_line_width_widget_to(GTK_CONTAINER(bottom_hbox));
+  add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));
   add_color_widgets_to(GTK_CONTAINER(bottom_hbox));
-  
-  gtk_widget_show_all (window);    
+  add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));
+  add_fill_widget_to(GTK_CONTAINER(bottom_hbox));  
+  //add_font_widget_to(GTK_CONTAINER(bottom_hbox));
+  add_coordinates_label_to(GTK_CONTAINER(bottom_hbox));
+
+  gtk_widget_show_all (window);
 
   gtk_main ();
       
