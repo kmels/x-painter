@@ -29,6 +29,11 @@ cairo_surface_t *current_surface;
 GdkPixbuf *current_surface_pixbuf;
 guchar *pixbuf_pixels;
 
+/* Tools */
+gboolean selection_is_on;
+double selection_x1, selection_y1, selection_x2, selection_y2;
+double move_x1, move_y1;
+
 /* Dirty variables */
 gboolean canvas_drawn;
 

@@ -295,3 +295,77 @@ gboolean circle(cairo_t *cr, double x0, double y0, double xf, double yf){
   }
   return TRUE;
 }
+
+void mark_selection(cairo_t *cr, double x1, double y1, double x2, double y2){
+  cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 1);
+
+  static const double dashed1[] = {4.0, 1.0};
+  static int len1  = sizeof(dashed1) / sizeof(dashed1[0]);
+
+  cairo_set_line_width(cr, 1.0);
+  cairo_set_dash(cr, dashed1, len1, 0);
+
+  cairo_move_to(cr, x1, y1);
+  cairo_line_to(cr, x1, y2);
+  cairo_move_to(cr, x1, y2);
+  cairo_line_to(cr, x2, y2);
+  cairo_move_to(cr, x2, y2);
+  cairo_line_to(cr, x2, y1);
+  cairo_move_to(cr, x2, y1);
+  cairo_line_to(cr, x1, y1);
+  cairo_stroke(cr);
+}
+
+/* Ensures that selection_x1 < selection_x2 && selection_y1 < selection_y2 */
+void save_selection(double x1, double y1, double x2, double y2){
+  if (x1 < x2){
+    selection_x1 = x1;
+    selection_x2 = x2;
+  }else{
+    selection_x1 = x2;
+    selection_x2 = x1;
+  }
+
+  if (y1 < y2){
+    selection_y1 = y1;
+    selection_y2 = y2;
+  }else{
+    selection_y1 = y2;
+    selection_y2 = y1;
+  }
+  
+  selection_is_on = TRUE;
+}
+
+void move(mouseStateStruct *mouseState, double x, double y){
+  //copy data
+  GdkPixbuf *pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),selection_x1,selection_y1,0,0,selection_x2-selection_x1,selection_y2-selection_y1);
+  
+  //simulate it's been cut
+  cairo_set_source_rgb(mouseState->cr,1,1,1);
+  cairo_rectangle(mouseState->cr,selection_x1,selection_y1,selection_x2-selection_x1,selection_y2-selection_y1);
+  cairo_fill(mouseState->cr);
+
+  //draw selection  
+  double diff_x = move_x1 - selection_x1;
+  double diff_y = move_y1 - selection_y1;
+
+  mark_selection(mouseState->cr,x-diff_x,y-diff_y,x+selection_x2-move_x1,y+selection_y2-move_y1);
+
+  gdk_cairo_set_source_pixbuf(mouseState->cr,pixbuf,x-diff_x,y-diff_y);
+  cairo_paint(mouseState->cr);  
+}
+
+/* Returns true iff given coordinate is within the posible selection */
+gboolean click_is_within_selection(double x, double y){
+  if (!selection_is_on)
+    return FALSE;
+  
+  if ((x > selection_x1) && (x < selection_x2) && (y > selection_y1) && (y < selection_y2)){
+    move_x1 = x;
+    move_y1 = y;
+    return TRUE;
+  }
+  
+  return FALSE;
+}

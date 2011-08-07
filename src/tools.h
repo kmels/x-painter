@@ -9,4 +9,8 @@ void rectangle(cairo_t *cr, double x1, double y1, double x2, double y2);
 void flood_fill(cairo_t *cr, double x1, double y1);
 gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y);
 gboolean circle(cairo_t *cr, double x, double y, double xf, double yf);
+void mark_selection(cairo_t *cr, double x1, double y1, double x2, double y2);
+void save_selection(double x1, double y1, double x2, double y2);
+void move(mouseStateStruct *mouseState, double x, double y);
+gboolean click_is_within_selection(double x, double y);
 #endif

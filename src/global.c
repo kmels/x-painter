@@ -28,6 +28,7 @@ void redo(GtkWidget *widget, gpointer data){
 
 /* Saves a surface, tipically called before drawing anything new, so we can simulate drawing on it*/
 void save_current_surface(cairo_surface_t *surface){
+  //printf("Salvando current \n");
   cairo_surface_t *surface_to_save = cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR, canvas->allocation.width,canvas->allocation.height);
   cairo_t *new_cr = cairo_create(surface_to_save);
   cairo_set_source_surface(new_cr,surface,0,0);
@@ -49,6 +50,7 @@ void paint_current_surface_on_canvas(cairo_t *cr){
 
 /* Saves a surface in history */
 void save_current_surface_in_history(){
+  //printf("Salvando historia \n");
   canvas_history.surfaces[++canvas_history.current_index] = current_surface;
   canvas_history.count = canvas_history.current_index;
 }
