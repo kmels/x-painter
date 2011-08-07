@@ -3,6 +3,14 @@
 #include "mouse_handler.h"
 #include <stdlib.h>
 #include <math.h>
+#include <X11/Xlib.h>
+//#include <gdk-pixbuf/gdk-pixbuf-private.h>
+//#include "gdk-pixbuf-xlib-private.h"
+#include <X11/Xutil.h>
+//#include <gdk-pixbuf/gdk-pixbuf.h>
+//#include <gdk-pixbuf-xlib/gdk-pixbuf-xlib.h>
+//#include <gdk/gdkx.h>
+//#include <gtk/gtk.h>
 
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel(cairo_t *cr,double x, double y){
@@ -12,6 +20,14 @@ inline void put_pixel(cairo_t *cr,double x, double y){
   cairo_fill(cr);
 }
 
+inline void put_pixel_pixbuf(GdkPixbuf *pixbuf,double x, double y){
+  guchar *p = pixbuf_pixels + ((int)y) * gdk_pixbuf_get_rowstride (current_surface_pixbuf) + ((int)x) * gdk_pixbuf_get_n_channels(current_surface_pixbuf);
+
+  p[0] = color1.red;
+  p[1] = color1.green;
+  p[2] = color1.blue;
+}
+
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel_width_1(cairo_t *cr,double x, double y){
   cairo_move_to(cr,x,y);
@@ -19,9 +35,21 @@ inline void put_pixel_width_1(cairo_t *cr,double x, double y){
   cairo_fill(cr);
 }
 
+XPainterColor get_pixel(double x,double y){
+  XPainterColor color;
+  guchar *p;
+  p = pixbuf_pixels + ((int)y) * gdk_pixbuf_get_rowstride (current_surface_pixbuf) + ((int)x) * gdk_pixbuf_get_n_channels(current_surface_pixbuf);
+  
+  color.red = p[0];
+  color.green = p[1];
+  color.blue = p[2];
+  color.alpha = p[3];
+  
+  return color;
+}
+
 /* Line, draws a line from x1,y1 to coordinate x2,y2 using Bresenham's algorithm*/
 inline void line(cairo_t *cr, double x1, double y1, double x2, double y2){
-  //printf("line: %f,%f -> %f,%f\n",x1,y1,x2,y2);
   gboolean steep = FALSE;
   double tmp;
   if (abs(y2-y1) > abs(x2 - x1)){
@@ -101,9 +129,7 @@ void spray(double x, double y,mouseStateStruct *mouseState){
   //while (mouseState->ispainting){
     for(pixel_i = 0; pixel_i < 100*line_width; pixel_i++){
       random_x = rand() % radius;
-      random_y = rand() % radius;
-      
-      //printf("rx,ry = %f,%f\n",random_x,random_y);
+      random_y = rand() % radius;     
       
       //is (random_x,random_y) inside the circle?    
       if ((pow(random_x,2) + pow(random_y,2)) <= radiusSquared){ //it is
@@ -119,20 +145,93 @@ void spray(double x, double y,mouseStateStruct *mouseState){
       }
       
       put_pixel_width_1(mouseState->cr,x+random_x*sign_x,y+random_y*sign_y);
-    }
-    
-    //printf("sleeping\n");
-    //sleep(1);
-    //printf("waking\n");
-    //}  
+    }   
 }
 
-void flood_fill(cairo_t *cr, double x, double y){
+inline gboolean colors_are_equal(XPainterColor c1, XPainterColor c2){
+  return (c1.red == c2.red) && (c1.green == c2.green) && (c1.blue == c2.blue);// && (c1.alpha == c2.alpha);
+}
+
+inline gboolean is_within_bounds(double x, double y){
+  return (x >= 0) && (x <= canvas->allocation.width) && (y >= 0) && (y <= canvas->allocation.height);
+}
+
+void flood_fill(cairo_t *cr,double x, double y){ 
+  // the destination color  
+  XPainterColor replacement_color = color1;
   
-  cairo_surface_t *surface = cairo_get_target(cr);
-  //char* image = cairo_image_surface_get_data(surface);
+  // the color we want to replace
+  XPainterColor target_color = get_pixel(x,y);
   
-  printf("FORMAT: %d\n",cairo_image_surface_get_format(surface));
+  if (colors_are_equal(replacement_color,target_color))
+    return;
+  
+  //a simple linked list
+  struct node_struct {
+    double x;
+    double y;
+    struct node_struct *next_node;
+  };
+  
+  typedef struct node_struct node;
+  
+  // Creating the list/stack
+  node *list = (node*) malloc(sizeof(struct node_struct));
+  (*list).x = x;
+  (*list).y = y;
+  (*list).next_node = NULL;
+  
+  // The algorithm 
+  while (list != NULL) {
+    node *pointer_to_free = list;
+    node current_node = *list;
+    list = current_node.next_node;
+    
+    put_pixel_pixbuf(current_surface_pixbuf,current_node.x,current_node.y);
+
+    //check neighbours
+    node *new_node;    
+    // Up
+    if (is_within_bounds(current_node.x,current_node.y-1) && colors_are_equal(get_pixel(current_node.x,current_node.y-1),target_color)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y-1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    // Down
+    if (is_within_bounds(current_node.x,current_node.y+1) && colors_are_equal(get_pixel(current_node.x,current_node.y+1),target_color)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y+1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    //Left
+    if (is_within_bounds(current_node.x-1,current_node.y) && colors_are_equal(get_pixel(current_node.x-1,current_node.y),target_color)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x-1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+
+    //Right
+    if (is_within_bounds(current_node.x+1,current_node.y) && colors_are_equal(get_pixel(current_node.x+1,current_node.y),target_color)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x+1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }        
+    
+    free(pointer_to_free);
+  }
+  
+  gdk_cairo_set_source_pixbuf(cr,current_surface_pixbuf,0,0);
+  cairo_paint(cr);
 }
 
 /* returns true if x,y belongs to the line drawn from x1,y1 to x2,y2 */

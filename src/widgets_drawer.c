@@ -173,13 +173,32 @@ void add_line_width_widget_to(GtkContainer *box){
   gtk_box_pack_end(GTK_BOX (box), line_width_label, FALSE, TRUE, 0);
 }
 
-void adjust_color(GtkColorButton *widget,gpointer data){  
-  int color_number = GPOINTER_TO_INT(data);
+GdkColor get_gdk_color_from_xpainter_color(XPainterColor color){
+  GdkColor dest_color;
+  dest_color.red = color.red*257;
+  dest_color.green = color.green*257;
+  dest_color.blue = color.blue*257;
+  return dest_color;
+}
 
+XPainterColor get_xpainter_color_from_gdk_color(GdkColor color){
+  XPainterColor dest_color;
+  dest_color.red = color.red/257;
+  dest_color.green = color.green/257;
+  dest_color.blue = color.blue/257;
+  return dest_color;
+}
+
+void adjust_color(GtkColorButton *widget,gpointer data){  
+  int color_number = GPOINTER_TO_INT(data);  
+  GdkColor gdk_chosen_color;
+
+  gtk_color_button_get_color(widget,&gdk_chosen_color);
+  
   if (color_number==1)
-    gtk_color_button_get_color(widget,&color1);
+    color1 = get_xpainter_color_from_gdk_color(gdk_chosen_color);
   else
-    gtk_color_button_get_color(widget,&color2);
+    color2 = get_xpainter_color_from_gdk_color(gdk_chosen_color);
 }
 
 void add_color_widgets_to(GtkContainer *box){
@@ -187,22 +206,24 @@ void add_color_widgets_to(GtkContainer *box){
   GtkWidget *color1_label = gtk_label_new("Color 1:");  
   gtk_misc_set_alignment(GTK_MISC(color1_label),0,2);  
   
-  //initial colors
+  //initial colors  
   color1.red = 65535;
   color1.blue = 51143;
 
   color2.green = 65535;
   color2.blue = 65535;
+  
+  GdkColor gdk_color1 = get_gdk_color_from_xpainter_color(color1);
+  GdkColor gdk_color2 = get_gdk_color_from_xpainter_color(color2);
 
-  GtkWidget *color1_widget = gtk_color_button_new_with_color(&color1);
+  GtkWidget *color1_widget = gtk_color_button_new_with_color(&gdk_color1);
   g_signal_connect(color1_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(1));
-  
-  
+    
   /* color 2 */
   GtkWidget *color2_label = gtk_label_new("Color 2:");  
   gtk_misc_set_alignment(GTK_MISC(color2_label),0,2);  
   
-  GtkWidget *color2_widget = gtk_color_button_new_with_color(&color2);  
+  GtkWidget *color2_widget = gtk_color_button_new_with_color(&gdk_color2);  
   g_signal_connect(color2_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(2));  
 
   /* add color 2 */

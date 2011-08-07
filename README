@@ -10,7 +10,7 @@ gcc -Wall -D_GNU_SOURCE main.c widgets_drawer.c global.c mouse_handler.c tools.c
 Extra
 =============
  * Dibujar líneas en __tiempo real_
- * Ancho de pixel
+ * Ancho de pixel para cualquier figura
  * Memoria para 100 canvases (Undo y Redo)
 
 Ideas Extra
@@ -22,14 +22,14 @@ Specs
 - Cut, Copy Paste
 - Undo - DONE
 - Save
-- Load 
+- Load
 - Circulo,Elipses, rectangulos, poligono (fill)
-- Línea – 3 grosores - DONE
-- Flood fill - Paterns
+- Línea – 3 grosores -- DONE
+- Flood fill - Paterns -- DONE
 - Texto
 - Get color -- DONE
 - Dibujar encima el círculo, cuadrado, etc
-- Spray
+- Spray -- DONE
 - Borrador - MARCADOR
 - Bmp
 - New 
@@ -39,8 +39,26 @@ Specs
 
 TODO 
 ------
- * [#C] Hacer toolbar con GtkToolPalette
  * [#C] Pintar focus en el current tool
+ * [#C] Alpha en pixbuf
+ * [#A] Arreglar bug del color ultimas 2 lineas del poligono
+ * [#A] Flood fill patterns
+ * [#A] Cut & Paste
+ * [#A] Copy & Paste
+ * [#B] Key bindings to Cut, Undo, Redo, Copy, Paste
+ * [#A] Texto
+ * [#A] Save
+ * [#A] Open
+ * [#A] New
+ * [#B] Fix spray
+ * [#A] Borrador
+ * [#A] Dibujar circulo filled
+ * [#A] Dibuajr cuadrado filled
+ * [#A] Elipse
+ * [#B] Dibujar poligono filled
+ * [#A] Dibujar elipse filled
+ * [#B] Cambiar mouse icons dependiendo del tool
+ * [#B] ZOOM
    
 [#A] = must
 [#B] = falla

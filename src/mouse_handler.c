@@ -31,7 +31,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	finish_polygon(&mouseState,event->x,event->y);
       }else if (event->button==1){ //left click	
 	save_current_surface(cairo_get_target(mouseState.cr));
-	cairo_set_source_rgb(mouseState.cr,(double)color1.red / 65535, (double)color1.green / 65535, (double)color1.blue / 65535);
+	cairo_set_source_rgb(mouseState.cr,(double)color1.red / 255, (double)color1.green / 255, (double)color1.blue / 255);
 	save_coordinates(event->x,event->y);
       }
 
@@ -58,7 +58,10 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	if (mouseState.coordinates[mouseState.coordinates_size-1].x!=event->x || mouseState.coordinates[mouseState.coordinates_size-1].y!=event->y)
 	  save_coordinates(event->x,event->y);
       }break;
-      case XPainter_FLOOD_TOOL: flood_fill(mouseState.cr,mouseState.coordinates[0].x, mouseState.coordinates[0].y); break;	
+      case XPainter_FLOOD_TOOL: {
+
+	flood_fill(mouseState.cr,mouseState.coordinates[0].x, mouseState.coordinates[0].y); 
+      }break;	
       default : break;
       }
 	
@@ -114,7 +117,7 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
     case XPainter_RECTANGLE_TOOL: {	
       mouseState.save_dragging = FALSE;
       paint_current_surface_on_canvas(mouseState.cr);	
-      rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+      rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);      
     } break;
     default: break;
     }

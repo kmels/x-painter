@@ -31,8 +31,7 @@ int main( int argc,
   gtk_box_pack_start (GTK_BOX (main_vbox), menubar, FALSE, TRUE, 0);
   
   /* toolbar */
-  get_toolbar(window, &toolbar);  
-  gtk_box_pack_start (GTK_BOX (main_vbox), toolbar, FALSE, TRUE, 0);
+  get_toolbar(window, &toolbar);    
   
   /* canvas */  
   canvas = gtk_drawing_area_new();
@@ -46,16 +45,18 @@ int main( int argc,
   g_signal_connect(canvas, "button-release-event", G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_CLICK));
   g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(update_coordinates_label), NULL);
   g_signal_connect(canvas, "motion-notify-event",G_CALLBACK(handle_mouse), GINT_TO_POINTER(MOUSE_DRAG));  
-  g_signal_connect(canvas, "expose-event",G_CALLBACK(redraw_canvas), GINT_TO_POINTER(MOUSE_DRAG));    
-  gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);    
+  g_signal_connect(canvas, "expose-event",G_CALLBACK(redraw_canvas), GINT_TO_POINTER(MOUSE_DRAG));      
   
   /* coordinates label */  
   GtkWidget *bottom_hbox = gtk_hbox_new(FALSE,1);
-  gtk_widget_show (bottom_hbox);
-  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);
+  gtk_widget_show (bottom_hbox);  
   coordinates_label = gtk_label_new("Coordinates");  
   gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,2);
 
+  
+  gtk_box_pack_start (GTK_BOX (main_vbox), canvas, FALSE, TRUE, 0);    
+  gtk_box_pack_start (GTK_BOX (main_vbox), toolbar, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (main_vbox), bottom_hbox, FALSE, TRUE, 0);  
   gtk_box_pack_start (GTK_BOX (bottom_hbox), coordinates_label, FALSE, TRUE, 0);
     
   add_line_width_widget_to(GTK_CONTAINER(bottom_hbox));

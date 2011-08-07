@@ -6,22 +6,31 @@
 /* GUI */
 GtkWidget *canvas;
 
-/* Functionality */
-XPainterToolItemType current_tool;
-int line_width;
-GdkColor color1, color2;
-
-cairo_surface_t *current_surface;
-
-/* Dirty variables */
-gboolean canvas_drawn;
-
 /* Types */
 struct history{
   cairo_surface_t *surfaces[100];
   int current_index;
   int count;
 };
+
+typedef struct{
+  guint16 red;
+  guint16 green;
+  guint16 blue;
+  guint16 alpha;
+} XPainterColor;
+
+/* Functionality */
+XPainterToolItemType current_tool;
+int line_width;
+XPainterColor color1, color2;
+
+cairo_surface_t *current_surface;
+GdkPixbuf *current_surface_pixbuf;
+guchar *pixbuf_pixels;
+
+/* Dirty variables */
+gboolean canvas_drawn;
 
 extern struct history canvas_history;
 

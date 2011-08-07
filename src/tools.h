@@ -10,4 +10,3 @@ void flood_fill(cairo_t *cr, double x1, double y1);
 gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y);
 gboolean circle(cairo_t *cr, double x, double y, double xf, double yf);
 #endif
-
