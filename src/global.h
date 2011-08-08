@@ -6,6 +6,9 @@
 /* GUI */  
 extern GtkWidget *window;
 extern GtkWidget *canvas;
+extern GtkWidget *fill_pattern_spin_button_widget;
+extern GtkWidget *fill_pattern_spin_button_widget;
+extern GdkPixbuf *fill_patterns[10];
 
 /* Types */
 struct history{
@@ -42,6 +45,7 @@ extern double selection_x1, selection_y1, selection_x2, selection_y2;
 extern GdkPixbuf *selection_pixbuf;
 extern double move_x1, move_y1;
 extern gboolean figure_is_filled;
+extern gboolean fill_with_pattern;
 
 /* Dirty variables */
 extern gboolean canvas_drawn;

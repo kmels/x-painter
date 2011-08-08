@@ -22,6 +22,8 @@
 struct history canvas_history;
 GtkWidget *coordinates_label;
 
+GtkWidget *current_fill_pattern;
+
 static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo", NULL, NULL, 0, "<Branch>" },
   { "/Archivo/Nuevo", "<control>N", G_CALLBACK(set_new_canvas), 0, NULL},
@@ -122,13 +124,24 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
   }
 }
 
+
+void set_current_fill_pattern_on_widget(){  
+  int pattern_number = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(fill_pattern_spin_button_widget));
+  cairo_t *cr = gdk_cairo_create(current_fill_pattern->window);
+  //cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(window));
+  gdk_cairo_set_source_pixbuf(cr,fill_patterns[pattern_number-1],0,0);
+  cairo_paint(cr);
+}
+
 gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
   //printf("redraw\n");
   //is the drawing area initialized?
   if (!canvas_drawn){
     canvas_drawn = TRUE;
     canvas_history.current_index = -1;
-    return FALSE;
+    
+    set_current_fill_pattern_on_widget();
+    return FALSE;    
   }
   else{
     //it has been initialized, now we are either in a redrawing or a new canvas escenario
@@ -145,6 +158,7 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
       //redraw
       paint_current_surface_on_canvas(cr);
     }
+    set_current_fill_pattern_on_widget();
     return TRUE;
   }  
 }
@@ -152,7 +166,7 @@ gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
 gboolean update_coordinates_label(GtkWidget *widget, void *e, gpointer *t){  
   GdkEventMotion *event = (GdkEventMotion*) e;
   char *s = NULL;
-  asprintf (&s, "x,y = %f,%f", event->x,event->y);
+  asprintf (&s, "x,y = %d,%d", (int)event->x,(int)event->y);
   gtk_label_set_text(GTK_LABEL(coordinates_label),s);    
   return FALSE; //propagate next events
 }
@@ -261,7 +275,7 @@ void adjust_figure_is_filled(GtkToggleButton *togglebutton, gpointer user_data){
 void add_fill_widget_to(GtkContainer *box){
   GtkWidget *fill_check_button_widget = gtk_check_button_new_with_label("Llenar\nfigura");
   g_signal_connect(fill_check_button_widget, "toggled",G_CALLBACK(adjust_figure_is_filled), NULL);
-  gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);  
+  gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);
 }
 
 void add_vertical_separator_to(GtkContainer *box){
@@ -291,9 +305,9 @@ void adjust_alpha(GtkRange *range,gpointer data){
 void add_alpha_ranges_to(GtkContainer *box){
   /* alpha1 */
   GtkWidget *alpha1_label = gtk_label_new("Color 1\nAlpha:");
-  gtk_misc_set_alignment(GTK_MISC(alpha1_label),0,0.5);    
+  gtk_misc_set_alignment(GTK_MISC(alpha1_label),0,0.5);
   GtkWidget *alpha1_widget = gtk_hscale_new_with_range(0,255,1);
-  gtk_widget_set_usize (GTK_WIDGET(alpha1_widget), 100, 45); 
+  gtk_widget_set_usize (GTK_WIDGET(alpha1_widget), 100, 45);
   g_signal_connect(alpha1_widget, "value-changed",G_CALLBACK(adjust_alpha), GINT_TO_POINTER(1)); 
   
   /* alpha 2 */
@@ -314,4 +328,49 @@ void add_alpha_ranges_to(GtkContainer *box){
   add_vertical_separator_to(GTK_CONTAINER(box));
   gtk_box_pack_end (GTK_BOX (box), alpha1_widget, FALSE, TRUE, 0);
   gtk_box_pack_end(GTK_BOX (box), alpha1_label, FALSE, TRUE, 0);
+}
+
+void adjust_fill_with_pattern(GtkToggleButton *togglebutton, gpointer user_data){
+  fill_with_pattern = gtk_toggle_button_get_active(togglebutton);
+}
+
+void add_fill_patterns_widgets_to(GtkContainer *box){
+  int i;
+  
+  for(i = 0; i < 10; i++){
+    fill_patterns[i] = gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,50,50);
+    unsigned char *pixels = gdk_pixbuf_get_pixels(fill_patterns[i]);
+    guchar *p;
+    
+    int x,y;
+    for (x = 0; x < gdk_pixbuf_get_width(fill_patterns[i]); x++){
+      for (y = 0; y < gdk_pixbuf_get_width(fill_patterns[i]); y++){
+	p = pixels + y * gdk_pixbuf_get_rowstride (fill_patterns[i]) + x * gdk_pixbuf_get_n_channels(fill_patterns[i]);	
+	p[0] = (i * 215) % 255;
+	p[1] = (i * 165) % 255;
+	p[2] = (i * 15) % 255;
+	//p[3] = 255;
+      }
+    }
+    //paint_pixbuf_with_color(fill_patterns[i],color2);
+  }
+  
+  GtkWidget *patterns_label = gtk_label_new("Patrón\n:");
+  gtk_misc_set_alignment(GTK_MISC(patterns_label),0,0.5);
+  
+  fill_pattern_spin_button_widget = gtk_spin_button_new_with_range(1,10,1);
+  g_signal_connect(fill_pattern_spin_button_widget, "value-changed",G_CALLBACK(set_current_fill_pattern_on_widget), NULL);
+
+  current_fill_pattern = gtk_drawing_area_new();
+  gtk_widget_set_size_request(current_fill_pattern,50,50);
+  
+  //set_current_fill_pattern_on_widget(1);
+  
+  gtk_box_pack_end(GTK_BOX (box), GTK_WIDGET(fill_pattern_spin_button_widget), FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), current_fill_pattern, FALSE, TRUE, 0);
+
+  GtkWidget *fill_with_pattern_widget = gtk_check_button_new_with_label("Llenar\ncon\npatron");
+  g_signal_connect(fill_with_pattern_widget, "toggled",G_CALLBACK(adjust_fill_with_pattern), NULL);  
+  gtk_box_pack_end(GTK_BOX (box), fill_with_pattern_widget, FALSE, TRUE, 0);
+  //gtk_box_pack_end(GTK_BOX (box), patterns_label, FALSE, TRUE, 0);
 }

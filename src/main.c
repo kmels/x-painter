@@ -64,6 +64,8 @@ int main( int argc,
   add_fill_widget_to(GTK_CONTAINER(bottom_hbox));  
   //add_font_widget_to(GTK_CONTAINER(bottom_hbox));
   add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));  
+  add_fill_patterns_widgets_to(GTK_CONTAINER(bottom_hbox));
+  add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));  
   add_coordinates_label_to(GTK_CONTAINER(bottom_hbox));  
 
   gtk_widget_show_all (window);

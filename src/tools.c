@@ -13,12 +13,15 @@
 //#include <gtk/gtk.h>
 
 GtkWidget *canvas;
+GtkWidget *fill_pattern_spin_button_widget;
+GdkPixbuf *fill_patterns[10];
 
 gboolean selection_is_on;
 double selection_x1, selection_y1, selection_x2, selection_y2;
 GdkPixbuf *selection_pixbuf;
 double move_x1, move_y1;
 gboolean figure_is_filled;
+gboolean fill_with_pattern;
 
 int line_width;
 XPainterColor color1, color2;
@@ -53,6 +56,19 @@ inline void put_pixel_pixbuf(GdkPixbuf *pixbuf,double x, double y){
   p[0] = color1.red;
   p[1] = color1.green;
   p[2] = color1.blue;
+}
+
+inline void put_pixel_pixbuf_with_pattern(GdkPixbuf *pixbuf,double x, double y,GdkPixbuf *pattern_pixbuf, unsigned char *pattern_pixels){
+  guchar *p = pixbuf_pixels + ((int)y) * gdk_pixbuf_get_rowstride (current_surface_pixbuf) + ((int)x) * gdk_pixbuf_get_n_channels(current_surface_pixbuf);
+
+  int x_pattern = ((int) x) % 50;
+  int y_pattern = ((int) y) % 50;
+
+  guchar *pixel_pattern = pattern_pixels + y_pattern * gdk_pixbuf_get_rowstride (pattern_pixbuf) + x_pattern * gdk_pixbuf_get_n_channels(pattern_pixbuf);
+
+  p[0] = pixel_pattern[0];
+  p[1] = pixel_pattern[1];
+  p[2] = pixel_pattern[2];
 }
 
 inline void put_pixel_pixbuf_color2(GdkPixbuf *pixbuf,unsigned char *pixels,double x, double y){  
@@ -224,13 +240,25 @@ void flood_fill(cairo_t *cr,double x, double y){
   (*list).y = y;
   (*list).next_node = NULL;
   
+  GdkPixbuf *pattern_pixbuf = NULL;
+  unsigned char *pattern_pixels = NULL;
+  if (fill_with_pattern){
+    int pattern_number = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(fill_pattern_spin_button_widget));
+    pattern_pixbuf = fill_patterns[pattern_number-1];
+    pattern_pixels = gdk_pixbuf_get_pixels(pattern_pixbuf);
+  }
+    
   // The algorithm 
   while (list != NULL) {
     node *pointer_to_free = list;
     node current_node = *list;
     list = current_node.next_node;
     
-    put_pixel_pixbuf(current_surface_pixbuf,current_node.x,current_node.y);
+    if (!fill_with_pattern)
+      put_pixel_pixbuf(current_surface_pixbuf,current_node.x,current_node.y);
+    else
+      put_pixel_pixbuf_with_pattern(current_surface_pixbuf,current_node.x,current_node.y,pattern_pixbuf,pattern_pixels);
+
     //check neighbours
     node *new_node;    
     // Up
@@ -521,7 +549,7 @@ void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
 
   GdkPixbuf *rectangle_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,canvas->allocation.width,canvas->allocation.height);
 
-  unsigned char *pixels = gdk_pixbuf_get_pixels(rectangle_pixbuf);  
+  unsigned char *pixels = gdk_pixbuf_get_pixels(rectangle_pixbuf);
   double mid_x = round(xi+(xf-xi)/2); //we need to get rid of decimals!
   double mid_y = round(yi+(yf-yi)/2);
 
@@ -819,6 +847,7 @@ inline gboolean is_within_polygon(int x, int y,mouseStateStruct *mouseState) {
   return oddNodes;
 }
 
+//http://alienryderflex.com/polygon/
 void fill_polygon(mouseStateStruct *mouseState){
   int x,y;
   

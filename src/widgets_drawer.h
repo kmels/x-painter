@@ -10,4 +10,5 @@ void add_line_width_widget_to(GtkContainer *box);
 void adjust_color(GtkColorButton *widget,gpointer data);
 void add_color_widgets_to(GtkContainer *box);
 void add_alpha_ranges_to(GtkContainer *box);
+void add_fill_patterns_widgets_to(GtkContainer *box);
 #endif

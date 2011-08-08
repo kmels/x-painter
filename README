@@ -23,6 +23,7 @@ Extra
  * Guardar como
  * Ventanas de error
  * Guardar seleccion a archivo
+ * 10 posibles patrones de llenado
 
 Ideas Extra
 ------------
@@ -52,7 +53,6 @@ Specs
 TODO 
 ------
  * [#A] Flood fill patterns
- * [#A] Dibujar poligono filled
  * [#A] Texto
  * [#A] Lapicero
  * [#C] Pintar focus en el current tool
