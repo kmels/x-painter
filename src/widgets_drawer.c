@@ -30,6 +30,13 @@ static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo/Guardar como", NULL, NULL, 0, NULL },
   { "/Archivo/separador", NULL, NULL, 0, "<Separator>" },
   { "/Archivo/Salir", "<control>Q", gtk_main_quit, 0, NULL },
+  { "/Editar", NULL, NULL, 0, "<Branch>" },
+  { "/Editar/Cortar", "<control>X", NULL, 0, NULL},
+  { "/Editar/Copiar", "<control>C", NULL, 0, NULL},  
+  { "/Editar/Pegar", "<control>V", NULL, 0, NULL},
+  { "/Editar/separador", NULL, NULL, 0, "<Separator>" },
+  { "/Editar/Undo", "<control>Z", G_CALLBACK(undo), 0, NULL},  
+  { "/Editar/Redo", "<control>Y", G_CALLBACK(redo), 0, NULL},
   { "/Ayuda", NULL, NULL, 0, "<LastBranch>" },
   { "/Ayuda/Acerca de", NULL, NULL, 0, NULL },
 };

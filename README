@@ -12,7 +12,9 @@ Extra
  * Dibujar líneas en __tiempo real_
  * Ancho de pixel para cualquier figura
  * Memoria para 100 canvases (Undo y Redo)
- * Key bindings para New, Open, Save y Salir
+ * Key bindings para 
+     ** Archivo: New, Open, Save y Salir
+     ** Editar: Cortar, Copiar, Pegar, Undo y Redo
  * Abre archivos BMP, PNG, GIF, PDF y JPG
  * Ventanas de error
 
