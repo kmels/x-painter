@@ -50,7 +50,7 @@ Specs
 TODO 
 ------
  * [#C] Pintar focus en el current tool
- * [#C] Alpha en pixbuf
+ * [#C] Alpha en pixbuf en flood fill
  * [#A] Flood fill patterns
  * [#A] Cut & Paste
  * [#A] Copy & Paste
@@ -58,14 +58,12 @@ TODO
  * [#A] Save
  * [#A] Lapicero
  * [#B] Fix spray
- * [#A] Dibujar circulo filled
- * [#A] Elipse
  * [#B] Dibujar poligono filled
  * [#A] Dibujar elipse filled
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
- * [#A] Arreglar bug de figuras filled
+ * [#A] Arreglar bug de figuras filled 
  * [#C] Fix bug when trying to move without selection
  * [#C] Arreglar bug cuando line_width > 1 y filled=on
    
