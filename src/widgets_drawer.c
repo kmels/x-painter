@@ -25,8 +25,8 @@ GtkWidget *coordinates_label;
 static GtkItemFactoryEntry menu_items[] = {
   { "/Archivo", NULL, NULL, 0, "<Branch>" },
   { "/Archivo/Nuevo", "<control>N", G_CALLBACK(set_new_canvas), 0, NULL},
-  { "/Archivo/Abrir", "<control>O", NULL, 0, NULL },
-  { "/Archivo/Guardar", "<control>S", NULL, 0, NULL },
+  { "/Archivo/Abrir", "<control>O", G_CALLBACK(open_file), 0, NULL },
+  { "/Archivo/Guardar", "<control>S", G_CALLBACK(save_file), 0, NULL },
   { "/Archivo/Guardar como", NULL, NULL, 0, NULL },
   { "/Archivo/separador", NULL, NULL, 0, "<Separator>" },
   { "/Archivo/Salir", "<control>Q", gtk_main_quit, 0, NULL },
@@ -115,7 +115,7 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
 }
 
 gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
-  //printf("redraw\n");
+  printf("redraw\n");
   //is the drawing area initialized?
   if (!canvas_drawn){
     canvas_drawn = TRUE;

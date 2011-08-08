@@ -9,7 +9,6 @@
 int main( int argc,
           char *argv[] )
 {
-  GtkWidget *window;
   GtkWidget *main_vbox;
   GtkWidget *menubar;
   GtkWidget *toolbar;

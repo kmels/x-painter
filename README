@@ -13,10 +13,14 @@ Extra
  * Ancho de pixel para cualquier figura
  * Memoria para 100 canvases (Undo y Redo)
  * Key bindings para New, Open, Save y Salir
+ * Abre archivos BMP, PNG, GIF, PDF y JPG
+ * Ventanas de error
 
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
+ * Importar imagen y mover seleccion
+ * Guardar seleccion
 
 Specs 
 -----------
@@ -49,7 +53,6 @@ TODO
  * [#B] Key bindings to Cut, Undo, Redo, Copy, Paste
  * [#A] Texto
  * [#A] Save
- * [#A] Open
  * [#A] Lapicero
  * [#B] Fix spray
  * [#A] Dibujar circulo filled
@@ -59,6 +62,7 @@ TODO
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
+ * [#A] Arreglar bug de figuras filled 
    
 [#A] = must
 [#B] = falla

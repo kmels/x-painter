@@ -3,7 +3,8 @@
 
 #include "types/xpainter_toolitem_id.h"
 
-/* GUI */
+/* GUI */  
+GtkWidget *window;
 GtkWidget *canvas;
 
 /* Types */
@@ -47,4 +48,7 @@ void redo(GtkWidget *widget, gpointer data);
 void paint_current_surface_on_canvas(cairo_t *canvas_context);
 void save_current_surface(cairo_surface_t *surface);
 void save_current_surface_in_history();
+void set_new_canvas(GtkWidget *widget, gpointer data);
+void open_file(GtkWidget *widget, gpointer data);
+void save_file(GtkWidget *widget, gpointer data);
 #endif
