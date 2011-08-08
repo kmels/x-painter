@@ -377,3 +377,10 @@ void add_fill_patterns_widgets_to(GtkContainer *box){
   gtk_box_pack_end(GTK_BOX (box), fill_with_pattern_widget, FALSE, TRUE, 0);
   //gtk_box_pack_end(GTK_BOX (box), patterns_label, FALSE, TRUE, 0);
 }
+
+void add_text_input_widget_to(GtkContainer *box){
+  text_input_widget = gtk_entry_new();
+  gtk_entry_set_text(GTK_ENTRY(text_input_widget),"Texto a escribir");
+
+  gtk_box_pack_end(GTK_BOX (box), GTK_WIDGET(text_input_widget), FALSE, TRUE, 0);
+}

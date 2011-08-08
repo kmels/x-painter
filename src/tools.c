@@ -15,6 +15,7 @@
 GtkWidget *canvas;
 GtkWidget *fill_pattern_spin_button_widget;
 GdkPixbuf *fill_patterns[10];
+GtkWidget *text_input_widget;
 
 gboolean selection_is_on;
 double selection_x1, selection_y1, selection_x2, selection_y2;

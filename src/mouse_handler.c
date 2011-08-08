@@ -8,6 +8,7 @@
 mouseStateStruct mouseState;
 gboolean selection_is_on;
 XPainterToolItemType current_tool;
+char *text = NULL;
 
 void save_coordinates(double x,double y){
   mouseState.coordinates[mouseState.coordinates_size].x = x;
@@ -51,6 +52,15 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       }break;
       case XPainter_ERASER_TOOL: single_eraser(mouseState.cr, event->x, event->y); break;
       case XPainter_SPRAY_TOOL: spray(event->x, event->y,&mouseState); break;
+      case XPainter_TEXT_TOOL: {
+	//save text
+	text  = "EJEJE";
+	cairo_select_font_face(mouseState.cr, "Purisa",CAIRO_FONT_SLANT_NORMAL,CAIRO_FONT_WEIGHT_BOLD);
+	cairo_set_font_size(mouseState.cr, 13);
+	cairo_move_to(mouseState.cr, event->x, event->y);
+	cairo_show_text(mouseState.cr, gtk_entry_get_text(GTK_ENTRY(text_input_widget))); 
+	
+      }break;
       default: break;
       }
       
@@ -85,6 +95,12 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	  save_current_surface(cairo_get_target(mouseState.cr));
 	  fill_rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
 	  rectangle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+	}
+      }break;
+      case XPainter_TEXT_TOOL:{
+	if (text!=NULL){
+	  save_current_surface(cairo_get_target(mouseState.cr));
+	  paint_current_surface_on_canvas(mouseState.cr);
 	}
       }break;
       case XPainter_CIRCLE_TOOL: {

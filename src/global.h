@@ -9,6 +9,7 @@ extern GtkWidget *canvas;
 extern GtkWidget *fill_pattern_spin_button_widget;
 extern GtkWidget *fill_pattern_spin_button_widget;
 extern GdkPixbuf *fill_patterns[10];
+extern GtkWidget *text_input_widget;
 
 /* Types */
 struct history{
