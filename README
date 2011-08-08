@@ -53,9 +53,7 @@ TODO
 ------
  * [#A] Flood fill patterns
  * [#A] Dibujar poligono filled
- * [#A] Dibujar elipse filled
  * [#A] Texto
- * [#A] Save
  * [#A] Lapicero
  * [#C] Pintar focus en el current tool
  * [#C] Alpha en pixbuf en flood fill
@@ -63,7 +61,6 @@ TODO
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
- * [#C] Fix bug when trying to move without selection
  * [#C] Arreglar bug cuando line_width > 1 y filled=on
  * [#A] Arreglar bug cuando filled rectangle es dibujado desde abajo
  * [#A] Arreglar paste!

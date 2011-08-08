@@ -90,6 +90,13 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	  circle(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
 	}
       }break;
+      case XPainter_ELLIPSE_TOOL: {
+	if (figure_is_filled){
+	  save_current_surface(cairo_get_target(mouseState.cr));
+	  fill_ellipse(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+	  ellipse(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y);
+	}
+      }break;
       case XPainter_POLYGON_TOOL: {
 	//we might just finished drawing a segment of the polygon, or finished drawing
 	if (event->button!=3) //we are drawing a segment (not finishing yet)

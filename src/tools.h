@@ -27,4 +27,5 @@ void cut(GtkWidget *widget, gpointer data);
 void copy(GtkWidget *widget, gpointer data);
 void paste(GtkWidget *widget, gpointer data);
 gboolean should_save_surface_at_click(int tool);
+void fill_ellipse(cairo_t *cr, double cen_x, double cen_y, double current_x, double current_y);
 #endif

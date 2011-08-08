@@ -719,3 +719,78 @@ gboolean should_save_surface_at_click(int tool){
   
   return TRUE;
 }
+
+inline gboolean is_within_ellipse_bounds(double x,double y, double cen_x,double cen_y, double asquare, double bsquare){    
+  return (is_within_bounds(x,y)) && (pow(x-cen_x,2)/(asquare) + pow(y-cen_y,2)/(bsquare) < 1);
+}
+
+/* Fills circle */
+void fill_ellipse(cairo_t *cr, double cen_x, double cen_y, double current_x, double current_y){
+  double asquare = pow(current_x - cen_x,2);
+  double bsquare = pow(current_y - cen_y,2);
+  
+  GdkPixbuf *ellipse_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,canvas->allocation.width,canvas->allocation.height);
+
+  unsigned char *pixels = gdk_pixbuf_get_pixels(ellipse_pixbuf);  
+  double mid_x = cen_x; 
+  double mid_y = cen_y;
+
+  typedef struct node_struct node;
+  
+  // Creating the list/stack
+  node *list = (node*) malloc(sizeof(struct node_struct));
+  (*list).x = mid_x;
+  (*list).y = mid_y;
+  (*list).next_node = NULL;
+  
+  // The algorithm 
+  while (list != NULL) {
+    node *pointer_to_free = list;
+    node current_node = *list;
+    list = current_node.next_node;
+    
+    put_pixel_pixbuf_color2(ellipse_pixbuf,pixels,current_node.x,current_node.y);
+    //check neighbours
+    node *new_node;    
+    // Up
+    if (is_within_ellipse_bounds(current_node.x,current_node.y-1,cen_x,cen_y,asquare,bsquare) && !colors_are_equal(get_pixel_pixbuf(current_node.x,current_node.y-1,ellipse_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y-1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    // Down
+    if (is_within_ellipse_bounds(current_node.x,current_node.y+1,cen_x,cen_y,asquare,bsquare) && !colors_are_equal(get_pixel_pixbuf(current_node.x,current_node.y+1,ellipse_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y+1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    //Left
+    if (is_within_ellipse_bounds(current_node.x-1,current_node.y,cen_x,cen_y,asquare,bsquare) && !colors_are_equal(get_pixel_pixbuf(current_node.x-1,current_node.y,ellipse_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x-1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+
+    //Right
+    if (is_within_ellipse_bounds(current_node.x+1,current_node.y,cen_x,cen_y,asquare,bsquare) && !colors_are_equal(get_pixel_pixbuf(current_node.x+1,current_node.y,ellipse_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x+1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    free(pointer_to_free);
+  }
+  
+  gdk_cairo_set_source_pixbuf(cr,ellipse_pixbuf,0,0);  
+  cairo_paint(cr);
+}
