@@ -4,8 +4,8 @@
 #include "types/xpainter_toolitem_id.h"
 
 /* GUI */  
-GtkWidget *window;
-GtkWidget *canvas;
+extern GtkWidget *window;
+extern GtkWidget *canvas;
 
 /* Types */
 struct history{
@@ -22,22 +22,23 @@ typedef struct{
 } XPainterColor;
 
 /* Functionality */
-XPainterToolItemType current_tool;
-int line_width;
-XPainterColor color1, color2;
+extern XPainterToolItemType current_tool;
+extern int line_width;
+extern XPainterColor color1, color2;
 
-cairo_surface_t *current_surface;
-GdkPixbuf *current_surface_pixbuf;
-guchar *pixbuf_pixels;
+extern cairo_surface_t *current_surface;
+extern GdkPixbuf *current_surface_pixbuf;
+extern guchar *pixbuf_pixels;
 
 /* Tools */
-gboolean selection_is_on;
-double selection_x1, selection_y1, selection_x2, selection_y2;
-double move_x1, move_y1;
-gboolean figure_is_filled;
+extern gboolean selection_is_on;
+extern double selection_x1, selection_y1, selection_x2, selection_y2;
+extern GdkPixbuf *selection_pixbuf;
+extern double move_x1, move_y1;
+extern gboolean figure_is_filled;
 
 /* Dirty variables */
-gboolean canvas_drawn;
+extern gboolean canvas_drawn;
 
 extern struct history canvas_history;
 

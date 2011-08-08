@@ -12,6 +12,21 @@
 //#include <gdk/gdkx.h>
 //#include <gtk/gtk.h>
 
+GtkWidget *canvas;
+
+gboolean selection_is_on;
+double selection_x1, selection_y1, selection_x2, selection_y2;
+GdkPixbuf *selection_pixbuf;
+double move_x1, move_y1;
+gboolean figure_is_filled;
+
+int line_width;
+XPainterColor color1, color2;
+
+cairo_surface_t *current_surface;
+GdkPixbuf *current_surface_pixbuf;
+guchar *pixbuf_pixels;
+
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel(cairo_t *cr,double x, double y){
   cairo_move_to(cr,x,y);
@@ -264,20 +279,20 @@ gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y){
 void mark_selection(cairo_t *cr, double x1, double y1, double x2, double y2){
   cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 1);
 
-  static const double dashed1[] = {4.0, 1.0};
+  static const double dashed1[] = {2.0, 1.0};
   static int len1  = sizeof(dashed1) / sizeof(dashed1[0]);
 
-  cairo_set_line_width(cr, 1.0);
+  cairo_set_line_width(cr, 0.5);
   cairo_set_dash(cr, dashed1, len1, 0);
 
-  cairo_move_to(cr, x1, y1);
-  cairo_line_to(cr, x1, y2);
-  cairo_move_to(cr, x1, y2);
-  cairo_line_to(cr, x2, y2);
-  cairo_move_to(cr, x2, y2);
-  cairo_line_to(cr, x2, y1);
-  cairo_move_to(cr, x2, y1);
-  cairo_line_to(cr, x1, y1);
+  cairo_move_to(cr, x1-1, y1-1);
+  cairo_line_to(cr, x1-1, y2+1);
+  cairo_move_to(cr, x1-1, y2+1);
+  cairo_line_to(cr, x2+1, y2+1);
+  cairo_move_to(cr, x2+1, y2+1);
+  cairo_line_to(cr, x2+1, y1-1);
+  cairo_move_to(cr, x2+1, y1-1);
+  cairo_line_to(cr, x1-1, y1-1);
   cairo_stroke(cr);
 }
 
@@ -300,12 +315,21 @@ void save_selection(double x1, double y1, double x2, double y2){
   }
   
   selection_is_on = TRUE;
+  selection_pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),selection_x1,selection_y1,0,0,selection_x2-selection_x1,selection_y2-selection_y1);
 }
 
-void move(mouseStateStruct *mouseState, double x, double y){
-  //copy data
-  GdkPixbuf *pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),selection_x1,selection_y1,0,0,selection_x2-selection_x1,selection_y2-selection_y1);
-  
+/* Tipically called after mouse release when using the MOVE tool */
+inline void save_new_selection_after_moving(double x,double y){
+  double diff_x = move_x1 - selection_x1;
+  double diff_y = move_y1 - selection_y1;
+
+  selection_x1 = x-diff_x;
+  selection_y1 = y-diff_y;
+  selection_x2 = x+selection_x2-move_x1;
+  selection_y2 = y+selection_y2-move_y1; 
+}
+
+void move(mouseStateStruct *mouseState, double x, double y){  
   //simulate it's been cut
   cairo_set_source_rgb(mouseState->cr,1,1,1);
   cairo_rectangle(mouseState->cr,selection_x1,selection_y1,selection_x2-selection_x1,selection_y2-selection_y1);
@@ -314,15 +338,30 @@ void move(mouseStateStruct *mouseState, double x, double y){
   //draw selection  
   double diff_x = move_x1 - selection_x1;
   double diff_y = move_y1 - selection_y1;
-
+  
   mark_selection(mouseState->cr,x-diff_x,y-diff_y,x+selection_x2-move_x1,y+selection_y2-move_y1);
+  
+  gdk_cairo_set_source_pixbuf(mouseState->cr,selection_pixbuf,x-diff_x,y-diff_y);
+  cairo_paint(mouseState->cr);
+}
 
-  gdk_cairo_set_source_pixbuf(mouseState->cr,pixbuf,x-diff_x,y-diff_y);
-  cairo_paint(mouseState->cr);  
+/* draws the move, but without the selection */
+void move_finally(mouseStateStruct *mouseState, double x, double y){
+  //simulate it's been cut
+  cairo_set_source_rgb(mouseState->cr,1,1,1);
+  cairo_rectangle(mouseState->cr,selection_x1,selection_y1,selection_x2-selection_x1,selection_y2-selection_y1);
+  cairo_fill(mouseState->cr);
+
+  //draw selection  
+  double diff_x = move_x1 - selection_x1;
+  double diff_y = move_y1 - selection_y1;
+  
+  gdk_cairo_set_source_pixbuf(mouseState->cr,selection_pixbuf,x-diff_x,y-diff_y);
+  cairo_paint(mouseState->cr);
 }
 
 /* Returns true iff given coordinate is within the posible selection */
-gboolean click_is_within_selection(double x, double y){
+gboolean click_is_within_selection(double x, double y){  
   if (!selection_is_on)
     return FALSE;
   

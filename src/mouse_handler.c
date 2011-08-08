@@ -6,6 +6,8 @@
 #include <string.h> /* memset */
 
 mouseStateStruct mouseState;
+gboolean selection_is_on;
+XPainterToolItemType current_tool;
 
 void save_coordinates(double x,double y){
   //printf("saving coordinates[%d] = %f,%f\n",mouseState.coordinates_size,x,y);
@@ -39,14 +41,18 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       }
       
       switch(current_tool){
-      case XPainter_MOVE_TOOL: remove_selection = !click_is_within_selection(event->x,event->y); break;
+      case XPainter_MOVE_TOOL: {
+	remove_selection = !click_is_within_selection(event->x,event->y); 
+      }break;
       case XPainter_ERASER_TOOL: single_eraser(mouseState.cr, event->x, event->y); break;
       case XPainter_SPRAY_TOOL: spray(event->x, event->y,&mouseState); break;
       default: break;
       }
       
-      if (remove_selection)
+      if (remove_selection){
+	//printf("selection off\n");
 	selection_is_on = FALSE;
+      }
     }
       break;
     case GDK_BUTTON_RELEASE: {
@@ -60,7 +66,10 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	save_selection(mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
       }break;
       case XPainter_MOVE_TOOL:{
-	selection_is_on = FALSE;
+	paint_current_surface_on_canvas(mouseState.cr);
+	move_finally(&mouseState,event->x,event->y);
+	//selection_is_on = FALSE;
+	save_new_selection_after_moving(event->x,event->y);
       }break;	
       case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
       case XPainter_RECTANGLE_TOOL: {

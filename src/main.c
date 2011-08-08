@@ -4,7 +4,7 @@
 #include "widgets_drawer.h"
 #include "tools.h"
 
-//GtkWidget *coordinates_label;
+GtkWidget *window;
 
 int main( int argc,
           char *argv[] )
