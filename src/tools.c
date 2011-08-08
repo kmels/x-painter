@@ -446,3 +446,13 @@ void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   }
   flood_fill(cr,xi+((int) (xf-xi)/2),yi+((int) (yf-yi)/2));
 }
+
+/* Set new canvas, and forget history */
+void set_new_canvas(GtkWidget *widget, gpointer data){
+  cairo_t *cr = gdk_cairo_create(canvas->window);
+  cairo_set_source_rgb(cr,1,1,1);
+  cairo_paint(cr);
+  save_current_surface(cairo_get_target(cr));
+  canvas_history.current_index = -1;
+  save_current_surface_in_history();
+}

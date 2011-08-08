@@ -12,6 +12,7 @@ Extra
  * Dibujar líneas en __tiempo real_
  * Ancho de pixel para cualquier figura
  * Memoria para 100 canvases (Undo y Redo)
+ * Key bindings para New, Open, Save y Salir
 
 Ideas Extra
 ------------
@@ -50,10 +51,8 @@ TODO
  * [#A] Save
  * [#A] Open
  * [#A] Lapicero
- * [#A] New
  * [#B] Fix spray
  * [#A] Dibujar circulo filled
- * [#A] Dibuajr cuadrado filled
  * [#A] Elipse
  * [#B] Dibujar poligono filled
  * [#A] Dibujar elipse filled
