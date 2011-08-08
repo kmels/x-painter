@@ -23,4 +23,8 @@ void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2);
 void move_finally(mouseStateStruct *mouseState, double x, double y);
 inline void save_new_selection_after_moving(double x,double y);
 void fill_circle(cairo_t *cr, double cen_x, double cen_y, double current_x, double current_y);
+void cut(GtkWidget *widget, gpointer data);
+void copy(GtkWidget *widget, gpointer data);
+void paste(GtkWidget *widget, gpointer data);
+gboolean should_save_surface_at_click(int tool);
 #endif

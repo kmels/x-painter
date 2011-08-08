@@ -42,7 +42,7 @@ void save_current_surface(cairo_surface_t *surface){
   //save pixbuf
   current_surface_pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),0,0,0,0,canvas->allocation.width,canvas->allocation.height);
   //save pixels
-  pixbuf_pixels = gdk_pixbuf_get_pixels (current_surface_pixbuf);
+  pixbuf_pixels = gdk_pixbuf_get_pixels (current_surface_pixbuf);  
 }
 
 void paint_current_surface_on_canvas(cairo_t *cr){

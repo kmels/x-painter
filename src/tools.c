@@ -28,12 +28,16 @@ cairo_surface_t *current_surface;
 GdkPixbuf *current_surface_pixbuf;
 guchar *pixbuf_pixels;
 
+double paste_x1,paste_y1,paste_x2,paste_y2;
+
 //a simple linked list
 struct node_struct {
   double x;
   double y;
   struct node_struct *next_node;
 };
+
+GdkPixbuf *clipboard_pixbuf;
 
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel(cairo_t *cr,double x, double y){
@@ -387,13 +391,14 @@ void move_finally(mouseStateStruct *mouseState, double x, double y){
 /* Returns true iff given coordinate is within the posible selection */
 gboolean click_is_within_selection(double x, double y){  
   if (!selection_is_on)
-    return FALSE;
-  
+    return FALSE;  
+
   if ((x > selection_x1) && (x < selection_x2) && (y > selection_y1) && (y < selection_y2)){
     move_x1 = x;
     move_y1 = y;
     return TRUE;
   }
+  show_error_message("No hay nada seleccionado para mover");
   
   return FALSE;
 }
@@ -648,4 +653,69 @@ void fill_circle(cairo_t *cr, double cen_x, double cen_y, double current_x, doub
   
   gdk_cairo_set_source_pixbuf(cr,circle_pixbuf,0,0);  
   cairo_paint(cr);
+}
+
+inline void save_paste_positions(){
+  paste_x1 = selection_x1;
+  paste_y1 = selection_y1;
+}
+
+/* Cut selection */
+void cut(GtkWidget *widget, gpointer data){//widget and data are useless
+  if (!selection_is_on)
+    show_error_message("No hay nada seleccionado para cortar");
+  
+  //get area
+  clipboard_pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),selection_x1,selection_y1,0,0,selection_x2-selection_x1,selection_y2-selection_y1);  
+  cairo_t *cr = gdk_cairo_create(canvas->window);      
+  //erase selection
+  paint_current_surface_on_canvas(cr);
+  
+  //draw white rectangle in selection area
+  cairo_set_source_rgb(cr,1,1,1);
+  cairo_rectangle(cr,selection_x1,selection_y1,selection_x2-selection_x1,selection_y2-selection_y1);
+  cairo_fill(cr);
+  
+  save_paste_positions();
+  save_current_surface(cairo_get_target(cr));
+  save_current_surface_in_history();
+}
+
+void paste(GtkWidget *widget, gpointer data){
+  cairo_t *cr = gdk_cairo_create(canvas->window);  
+  //save_current_surface(cairo_get_target(cr));
+  
+  // GError          *error = NULL;
+  //gdk_pixbuf_save (current_surface_pixbuf, "current.png", "png", &error,NULL);
+
+  double clipboard_width = (double) gdk_pixbuf_get_width(clipboard_pixbuf);
+  double clipboard_height = (double) gdk_pixbuf_get_height(clipboard_pixbuf);  
+
+  selection_x1 = paste_x1;
+  selection_y1 = paste_y1;
+  selection_x2 = paste_x1+clipboard_width;
+  selection_y2 = paste_y1+clipboard_height;
+  
+  gdk_cairo_set_source_pixbuf(cr,clipboard_pixbuf,paste_x1,paste_y1);
+  cairo_paint(cr);
+  current_tool = XPainter_MOVE_TOOL;
+  
+  mark_selection(cr,selection_x1,selection_y1,selection_x2,selection_y2);
+  save_selection(selection_x1,selection_y1,selection_x2,selection_y2);
+}
+
+/* Copy selection */
+void copy(GtkWidget *widget, gpointer data){//widget and data are useless
+  if (!selection_is_on)
+    show_error_message("No hay nada seleccionado para copiar");
+  
+  save_paste_positions();
+  clipboard_pixbuf = gdk_pixbuf_get_from_drawable(NULL,GDK_DRAWABLE(canvas->window),gdk_colormap_get_system(),selection_x1,selection_y1,0,0,selection_x2-selection_x1,selection_y2-selection_y1);
+}
+
+gboolean should_save_surface_at_click(int tool){
+  if (tool==XPainter_SELECT_TOOL || tool == XPainter_MOVE_TOOL)
+    return FALSE;
+  
+  return TRUE;
 }

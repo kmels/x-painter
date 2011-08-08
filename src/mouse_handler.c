@@ -10,7 +10,6 @@ gboolean selection_is_on;
 XPainterToolItemType current_tool;
 
 void save_coordinates(double x,double y){
-  //printf("saving coordinates[%d] = %f,%f\n",mouseState.coordinates_size,x,y);
   mouseState.coordinates[mouseState.coordinates_size].x = x;
   mouseState.coordinates[mouseState.coordinates_size].y = y;
   mouseState.coordinates_size++;
@@ -35,7 +34,9 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	//might be finishing polygon
 	finish_polygon(&mouseState,event->x,event->y);
       }else if (event->button==1){ //left click	
-	save_current_surface(cairo_get_target(mouseState.cr));
+	if (should_save_surface_at_click(current_tool))
+	    save_current_surface(cairo_get_target(mouseState.cr));
+	
 	cairo_set_source_rgba(mouseState.cr,(double)color1.red / 255, (double)color1.green / 255, (double)color1.blue / 255,(double)color1_alpha/255);
 	save_coordinates(event->x,event->y);
       }
@@ -49,10 +50,8 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       default: break;
       }
       
-      if (remove_selection){
-	//printf("selection off\n");
+      if (remove_selection)
 	selection_is_on = FALSE;
-      }
     }
       break;
     case GDK_BUTTON_RELEASE: {
@@ -62,14 +61,18 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       switch(current_tool){
       case XPainter_SELECT_TOOL:{
 	mouseState.should_save_change = FALSE;
-	mark_selection(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
-	save_selection(mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+	if (mouseState.coordinates[0].x!=event->x && mouseState.coordinates[0].y!=event->y){	  
+	  mark_selection(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+	  save_selection(mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
+	}
       }break;
       case XPainter_MOVE_TOOL:{
-	paint_current_surface_on_canvas(mouseState.cr);
-	move_finally(&mouseState,event->x,event->y);
-	//selection_is_on = FALSE;
-	save_new_selection_after_moving(event->x,event->y);
+	if(selection_is_on){
+	  paint_current_surface_on_canvas(mouseState.cr);
+	  move_finally(&mouseState,event->x,event->y);
+	  //selection_is_on = FALSE;
+	  save_new_selection_after_moving(event->x,event->y);
+	}
       }break;	
       case XPainter_LINE_TOOL: line(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x,event->y); break;
       case XPainter_RECTANGLE_TOOL: {
@@ -139,9 +142,11 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       mark_selection(mouseState.cr, mouseState.coordinates[0].x, mouseState.coordinates[0].y, event->x, event->y);
     }break;
     case XPainter_MOVE_TOOL: {
-      mouseState.save_dragging = FALSE;
-      paint_current_surface_on_canvas(mouseState.cr);
-      move(&mouseState,event->x,event->y);
+      if(selection_is_on){
+	mouseState.save_dragging = FALSE;
+	paint_current_surface_on_canvas(mouseState.cr);
+	move(&mouseState,event->x,event->y);
+      }
     } break;
     case XPainter_BRUSH_TOOL: brush(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
     case XPainter_ERASER_TOOL: dragged_eraser(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x, event->y); break; 
@@ -188,6 +193,6 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
   default:
     break;
   }
-
+  
   return TRUE;
 }

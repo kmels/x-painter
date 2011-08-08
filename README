@@ -18,21 +18,21 @@ Extra
  * Key bindings para 
      ** Archivo: New, Open, Save y Salir
      ** Editar: Cortar, Copiar, Pegar, Undo y Redo
- * Abre archivos BMP, PNG, GIF, PDF y JPG
+ * Abrir y guardar archivos BMP, PNG, GIF, PDF y JPG
  * Ventanas de error
 
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
  * Importar imagen y mover seleccion
- * Guardar seleccion
+ * Guardar seleccion a archivo
 
 Specs 
 -----------
 - Cut, Copy Paste
 - Undo - DONE
 - Save
-- Load
+- Load -- DONE
 - Circulo,Elipses, rectangulos, poligono (fill)
 - Línea – 3 grosores -- DONE
 - Flood fill - Paterns -- DONE
@@ -49,24 +49,23 @@ Specs
 
 TODO 
 ------
- * [#C] Pintar focus en el current tool
- * [#C] Alpha en pixbuf en flood fill
  * [#A] Flood fill patterns
- * [#A] Cut & Paste
- * [#A] Copy & Paste
+ * [#A] Dibujar poligono filled
+ * [#A] Dibujar elipse filled
  * [#A] Texto
  * [#A] Save
  * [#A] Lapicero
+ * [#C] Pintar focus en el current tool
+ * [#C] Alpha en pixbuf en flood fill
  * [#B] Fix spray
- * [#B] Dibujar poligono filled
- * [#A] Dibujar elipse filled
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
- * [#A] Arreglar bug de figuras filled 
  * [#C] Fix bug when trying to move without selection
  * [#C] Arreglar bug cuando line_width > 1 y filled=on
-   
+ * [#A] Arreglar bug cuando filled rectangle es dibujado desde abajo
+ * [#A] Arreglar paste!
+
 [#A] = must
 [#B] = falla
 [#C] = no esencial, pero nice.
