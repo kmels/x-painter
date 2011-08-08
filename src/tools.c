@@ -251,6 +251,7 @@ gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y){
   
   int ncoordinates = mouseState->coordinates_size;
   
+  cairo_set_source_rgb(mouseState->cr,(double)color1.red / 255, (double)color1.green / 255, (double)color1.blue / 255);
   //line from the last saved coordinate to the current position
   line(mouseState->cr,mouseState->coordinates[ncoordinates-1].x,mouseState->coordinates[ncoordinates-1].y,x,y);
   //line from the current position to the first coordinate

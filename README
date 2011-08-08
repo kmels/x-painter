@@ -46,7 +46,6 @@ TODO
 ------
  * [#C] Pintar focus en el current tool
  * [#C] Alpha en pixbuf
- * [#A] Arreglar bug del color ultimas 2 lineas del poligono
  * [#A] Flood fill patterns
  * [#A] Cut & Paste
  * [#A] Copy & Paste
@@ -63,6 +62,8 @@ TODO
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
  * [#A] Arreglar bug de figuras filled 
+ * [#B] Set color1 and color2 alpha
+ * [#A] Pintar filled con color2;
    
 [#A] = must
 [#B] = falla

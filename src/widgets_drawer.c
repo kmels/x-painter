@@ -115,7 +115,7 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
 }
 
 gboolean redraw_canvas(GtkWidget *widget, gpointer userdata){
-  printf("redraw\n");
+  //printf("redraw\n");
   //is the drawing area initialized?
   if (!canvas_drawn){
     canvas_drawn = TRUE;
