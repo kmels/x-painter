@@ -34,6 +34,8 @@ extern guchar *pixbuf_pixels;
 extern GdkPixbuf *clipboard_pixbuf;
 extern double paste_x1,paste_y1,paste_x2,paste_y2;
 
+extern char* filename;
+
 /* Tools */
 extern gboolean selection_is_on;
 extern double selection_x1, selection_y1, selection_x2, selection_y2;
@@ -56,5 +58,7 @@ void save_current_surface_in_history();
 void set_new_canvas(GtkWidget *widget, gpointer data);
 void open_file(GtkWidget *widget, gpointer data);
 void save_file(GtkWidget *widget, gpointer data);
+void save_file_as(GtkWidget *widget, gpointer data);
+void save_current_selection(GtkWidget *widget, gpointer data);
 void show_error_message(char *message);
 #endif

@@ -4,6 +4,7 @@
 
 GtkWidget *window;
 gboolean canvas_drawn;
+char *filename;
 
 void assign_current_tool(GtkWidget *widget, gpointer data){  
   current_tool = (XPainterToolItemType) data;
@@ -91,8 +92,8 @@ gboolean set_new_canvas_from_file(char *open_filename){
   cairo_surface_t *new_surface = cairo_surface_create_similar(cairo_get_target(window_cr),CAIRO_CONTENT_COLOR_ALPHA,canvas->allocation.width,canvas->allocation.height);
   cairo_t *new_surface_cr = cairo_create(new_surface);
   
-  if ((strcmp(extension,"bmp")==0) || (strcmp(extension,"png")==0) || (strcmp(extension,"jpg")==0) || (strcmp(extension,"pdf")==0) || (strcmp(extension,"pdf")==0))
-    image_pixbuf= gdk_pixbuf_new_from_file(open_filename,NULL);  
+  if ((strcmp(extension,"bmp")==0) || (strcmp(extension,"png")==0) || (strcmp(extension,"jpg")==0) || (strcmp(extension,"gif")==0) || (strcmp(extension,"pdf")==0))
+    image_pixbuf= gdk_pixbuf_new_from_file(open_filename,NULL);
   
   //set the surface, and clean history
   if (image_pixbuf!=NULL){
@@ -138,6 +139,74 @@ void open_file(GtkWidget *widget, gpointer data){
     show_error_message("Ocurrio un error al abrir al archivo, extensiones soportadas: PNG, BMP, GIF, PDF y JPG");
 }
 
-void save_file(GtkWidget *widget, gpointer data){
-  printf("perrrate ombre\n");
+void save_canvas_as(char* target_filename){
+  size_t filename_length = strlen(target_filename);
+  char *extension = strndup(target_filename+filename_length-3,filename_length);  
+  
+  GError *error = NULL;
+  gboolean saved = gdk_pixbuf_save (current_surface_pixbuf, target_filename, extension, &error,NULL);
+  
+  if (!saved)
+    show_error_message("Ocurrio un error al guardar el archivo. Formatos soportados: BMP y PNG");
+  filename = target_filename;
+}
+
+void save_pixbuf_as(GdkPixbuf *pixbuf, char* target_filename){
+  size_t filename_length = strlen(target_filename);
+  char *extension = strndup(target_filename+filename_length-3,filename_length);  
+  
+  GError *error = NULL;
+  gboolean saved = gdk_pixbuf_save (pixbuf, target_filename, extension, &error,NULL);
+  
+  if (!saved)
+    show_error_message("Ocurrio un error al guardar el archivo. Formatos soportados: BMP y PNG");
+}
+
+void save_file(GtkWidget *widget, gpointer data){    
+  if (filename != NULL)
+    save_canvas_as(filename);
+  else
+    save_file_as(NULL,NULL);
+}
+
+void save_file_as(GtkWidget *widget, gpointer data){
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new ("Guardar archivo como",
+					GTK_WINDOW(window),
+					GTK_FILE_CHOOSER_ACTION_SAVE,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+					NULL);
+  
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
+    char *new_filename;
+    new_filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    save_canvas_as(new_filename);
+  }
+  
+  gtk_widget_destroy (dialog);
+}
+
+void save_current_selection(GtkWidget *widget, gpointer data){
+  if (!selection_is_on){
+    show_error_message("No hay nada seleccionado");
+    return;
+  }  
+
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new ("Guardar seleccion como",
+					GTK_WINDOW(window),
+					GTK_FILE_CHOOSER_ACTION_SAVE,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+					NULL);
+  
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){
+    char *new_filename;
+    new_filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    save_pixbuf_as(selection_pixbuf,new_filename);
+  }
+  
+  gtk_widget_destroy (dialog);
+  paint_current_surface_on_canvas(gdk_cairo_create(canvas->window));
 }

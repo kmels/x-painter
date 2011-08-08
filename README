@@ -18,20 +18,22 @@ Extra
  * Key bindings para 
      ** Archivo: New, Open, Save y Salir
      ** Editar: Cortar, Copiar, Pegar, Undo y Redo
- * Abrir y guardar archivos BMP, PNG, GIF, PDF y JPG
+ * Abrir archivos BMP, PNG, GIF, PDF y JPG
+ * Guardar archivos BMP, PNG
+ * Guardar como
  * Ventanas de error
+ * Guardar seleccion a archivo
 
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
- * Importar imagen y mover seleccion
- * Guardar seleccion a archivo
+ * Importar imagen y mover seleccion 
 
 Specs 
 -----------
 - Cut, Copy Paste
 - Undo - DONE
-- Save
+- Save -- DONE
 - Load -- DONE
 - Circulo,Elipses, rectangulos, poligono (fill)
 - Línea – 3 grosores -- DONE
