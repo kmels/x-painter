@@ -9,4 +9,5 @@ gboolean update_coordinates_label(GtkWidget *widget, void *e, gpointer *t);
 void add_line_width_widget_to(GtkContainer *box);
 void adjust_color(GtkColorButton *widget,gpointer data);
 void add_color_widgets_to(GtkContainer *box);
+void add_alpha_ranges_to(GtkContainer *box);
 #endif

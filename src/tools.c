@@ -22,10 +22,18 @@ gboolean figure_is_filled;
 
 int line_width;
 XPainterColor color1, color2;
+guint16 color1_alpha, color2_alpha;
 
 cairo_surface_t *current_surface;
 GdkPixbuf *current_surface_pixbuf;
 guchar *pixbuf_pixels;
+
+//a simple linked list
+struct node_struct {
+  double x;
+  double y;
+  struct node_struct *next_node;
+};
 
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel(cairo_t *cr,double x, double y){
@@ -43,11 +51,33 @@ inline void put_pixel_pixbuf(GdkPixbuf *pixbuf,double x, double y){
   p[2] = color1.blue;
 }
 
+inline void put_pixel_pixbuf_color2(GdkPixbuf *pixbuf,unsigned char *pixels,double x, double y){  
+  guchar *p = pixels + ((int)y) * gdk_pixbuf_get_rowstride (pixbuf) + ((int)x) * gdk_pixbuf_get_n_channels(pixbuf);
+
+  p[0] = color2.red;
+  p[1] = color2.green;
+  p[2] = color2.blue;
+  p[3] = color2.alpha;
+}
+
 /* paints a single pixel in coordinate x,y*/
 inline void put_pixel_width_1(cairo_t *cr,double x, double y){
   cairo_move_to(cr,x,y);
   cairo_rectangle(cr,x,y,1,1);
   cairo_fill(cr);
+}
+
+XPainterColor get_pixel_pixbuf(double x,double y,GdkPixbuf *pixbuf,unsigned char *pixels){
+  XPainterColor color;
+  guchar *p;
+  p = pixels + ((int)y) * gdk_pixbuf_get_rowstride (pixbuf) + ((int)x) * gdk_pixbuf_get_n_channels(pixbuf);
+  
+  color.red = p[0];
+  color.green = p[1];
+  color.blue = p[2];
+  color.alpha = p[3];
+  
+  return color;
 }
 
 XPainterColor get_pixel(double x,double y){
@@ -164,6 +194,7 @@ void spray(double x, double y,mouseStateStruct *mouseState){
 }
 
 inline gboolean colors_are_equal(XPainterColor c1, XPainterColor c2){
+  //printf("c1: %d,%d,%d; c2: %d,%d,%d\n",c1.red,c1.green,c1.blue,c2.red,c2.green,c2.blue);
   return (c1.red == c2.red) && (c1.green == c2.green) && (c1.blue == c2.blue);// && (c1.alpha == c2.alpha);
 }
 
@@ -179,14 +210,7 @@ void flood_fill(cairo_t *cr,double x, double y){
   XPainterColor target_color = get_pixel(x,y);
   
   if (colors_are_equal(replacement_color,target_color))
-    return;
-  
-  //a simple linked list
-  struct node_struct {
-    double x;
-    double y;
-    struct node_struct *next_node;
-  };
+    return;    
   
   typedef struct node_struct node;
   
@@ -465,17 +489,17 @@ gboolean circle(cairo_t *cr, double x0, double y0, double xf, double yf){
   return TRUE;
 }
 
-/*inline gboolean is_within_rectangle_bounds(double x,double y, double rect_x1,double rect_y1, double rect_x2, double rect_y2){   
+inline gboolean is_within_rectangle_bounds(double x,double y, double rect_x1,double rect_y1, double rect_x2, double rect_y2){   
   gboolean t = (x > rect_x1) && (x < rect_x2) && (y > rect_y1) && (y < rect_y2);
   return t;
-  }*/
+}
 
 void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
   double xi = x1;
   double yi = y1;  
   double xf = x2;
   double yf = y2;
-
+  
   if (x2 < x1){
     xi = x2;
     xf = x1;
@@ -484,5 +508,72 @@ void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
     yi = y2;
     yi = y1;
   }
-  flood_fill(cr,xi+((int) (xf-xi)/2),yi+((int) (yf-yi)/2));
+
+  GdkPixbuf *rectangle_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,canvas->allocation.width,canvas->allocation.height);
+
+  unsigned char *pixels = gdk_pixbuf_get_pixels(rectangle_pixbuf);  
+  double mid_x = round(xi+(xf-xi)/2); //we need to get rid of decimals!
+  double mid_y = round(yi+(yf-yi)/2);
+
+  typedef struct node_struct node;
+  
+  // Creating the list/stack
+  node *list = (node*) malloc(sizeof(struct node_struct));
+  (*list).x = mid_x;
+  (*list).y = mid_y;
+  (*list).next_node = NULL;
+  
+  // The algorithm 
+  while (list != NULL) {
+    node *pointer_to_free = list;
+    node current_node = *list;
+    list = current_node.next_node;
+    
+    put_pixel_pixbuf_color2(rectangle_pixbuf,pixels,current_node.x,current_node.y);
+    //check neighbours
+    node *new_node;    
+    // Up
+    if (is_within_rectangle_bounds(current_node.x,current_node.y-1,x1,y1,x2,y2) && !colors_are_equal(get_pixel_pixbuf(current_node.x,current_node.y-1,rectangle_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y-1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    // Down
+    if (is_within_rectangle_bounds(current_node.x,current_node.y+1,x1,y1,x2,y2) && !colors_are_equal(get_pixel_pixbuf(current_node.x,current_node.y+1,rectangle_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x;
+      (*new_node).y = current_node.y+1;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    //Left
+    if (is_within_rectangle_bounds(current_node.x-1,current_node.y,x1,y1,x2,y2) && !colors_are_equal(get_pixel_pixbuf(current_node.x-1,current_node.y,rectangle_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x-1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+
+    //Right
+    if (is_within_rectangle_bounds(current_node.x+1,current_node.y,x1,y1,x2,y2) && !colors_are_equal(get_pixel_pixbuf(current_node.x+1,current_node.y,rectangle_pixbuf,pixels),color2)) {
+      new_node = (node*) malloc(sizeof(struct node_struct));
+      (*new_node).x = current_node.x+1;
+      (*new_node).y = current_node.y;
+      (*new_node).next_node = list;
+      list = new_node;
+    }
+    
+    free(pointer_to_free);
+  }
+  
+  //GError          *error = NULL;
+  //gboolean t = gdk_pixbuf_save (rectangle_pixbuf, "rectangle.png", "png", &error,NULL);
+  gdk_cairo_set_source_pixbuf(cr,rectangle_pixbuf,0,0);  
+  cairo_paint(cr);  
+  //flood_fill(cr,xi+((int) (xf-xi)/2),yi+((int) (yf-yi)/2));
 }

@@ -11,7 +11,10 @@ Extra
 =============
  * Dibujar líneas en __tiempo real_
  * Ancho de pixel para cualquier figura
+ * 2 colores diferentes para pintar en caso de figura filled.
+ * Transparencia en el canvas (para los 2 colores)
  * Memoria para 100 canvases (Undo y Redo)
+ * Seleccionar y mover, además mover aún despues de haber terminado de mover
  * Key bindings para 
      ** Archivo: New, Open, Save y Salir
      ** Editar: Cortar, Copiar, Pegar, Undo y Redo
@@ -51,7 +54,6 @@ TODO
  * [#A] Flood fill patterns
  * [#A] Cut & Paste
  * [#A] Copy & Paste
- * [#B] Key bindings to Cut, Undo, Redo, Copy, Paste
  * [#A] Texto
  * [#A] Save
  * [#A] Lapicero
@@ -63,9 +65,9 @@ TODO
  * [#B] Cambiar mouse icons dependiendo del tool
  * [#B] ZOOM
  * [#B] Arreglar bug cuando selection se sale del drawing area
- * [#A] Arreglar bug de figuras filled 
- * [#B] Set color1 and color2 alpha
- * [#A] Pintar filled con color2;
+ * [#A] Arreglar bug de figuras filled
+ * [#C] Fix bug when trying to move without selection
+ * [#C] Arreglar bug cuando line_width > 1 y filled=on
    
 [#A] = must
 [#B] = falla

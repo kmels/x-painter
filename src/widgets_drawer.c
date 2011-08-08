@@ -162,20 +162,20 @@ void adjust_line_width(GtkRange *range,gpointer user_data){
 
 void add_line_width_widget_to(GtkContainer *box){
   /* add label */
-  GtkWidget *line_width_label = gtk_label_new("Ancho de pixel");  
+  GtkWidget *line_width_label = gtk_label_new("Ancho\nde\n\npixel");  
   gtk_misc_set_alignment(GTK_MISC(line_width_label),0,0.5);  
   
   GtkWidget *line_width_widget;
   line_width_widget = gtk_hscale_new_with_range(1,10,1);
 
-  gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 200, 45);
+  gtk_widget_set_usize (GTK_WIDGET(line_width_widget), 80, 45);
   
-  int i;
+  /*int i;
   char *s = NULL;  
   for (i = 0; i <= 10; i++){
     asprintf (&s, "%d", i);
     gtk_scale_add_mark(GTK_SCALE(line_width_widget),(double)i,GTK_POS_LEFT,s);
-  }
+    }*/
   
   g_signal_connect(line_width_widget, "value-changed",G_CALLBACK(adjust_line_width), NULL);
   
@@ -205,10 +205,14 @@ void adjust_color(GtkColorButton *widget,gpointer data){
 
   gtk_color_button_get_color(widget,&gdk_chosen_color);
   
-  if (color_number==1)
+  if (color_number==1){
     color1 = get_xpainter_color_from_gdk_color(gdk_chosen_color);
-  else
+    color1.alpha = color1_alpha;
+  }
+  else{
     color2 = get_xpainter_color_from_gdk_color(gdk_chosen_color);
+    color2.alpha = color2_alpha;
+  }
 }
 
 void add_color_widgets_to(GtkContainer *box){
@@ -221,26 +225,28 @@ void add_color_widgets_to(GtkContainer *box){
   color1.blue = 51143;
 
   color2.green = 65535;
-  color2.blue = 65535;
+  color2.red = 65535;
   
   GdkColor gdk_color1 = get_gdk_color_from_xpainter_color(color1);
   GdkColor gdk_color2 = get_gdk_color_from_xpainter_color(color2);
 
   GtkWidget *color1_widget = gtk_color_button_new_with_color(&gdk_color1);
   g_signal_connect(color1_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(1));
-    
+  adjust_color(GTK_COLOR_BUTTON(color1_widget),GINT_TO_POINTER(1));
+  
   /* color 2 */
   GtkWidget *color2_label = gtk_label_new("Color 2 ");  
   gtk_misc_set_alignment(GTK_MISC(color2_label),0,0.5);  
   
   GtkWidget *color2_widget = gtk_color_button_new_with_color(&gdk_color2);  
   g_signal_connect(color2_widget, "color-set",G_CALLBACK(adjust_color), GINT_TO_POINTER(2));  
+  adjust_color(GTK_COLOR_BUTTON(color2_widget),GINT_TO_POINTER(2));
 
   /* add color 2 */
   gtk_box_pack_end(GTK_BOX (box), color2_label, FALSE, TRUE, 0);
   gtk_box_pack_end (GTK_BOX (box), color2_widget, FALSE, TRUE, 0);  
   
-  add_vertical_separator_to(box);
+  //add_vertical_separator_to(box);
 
   /* add color 1 */
   gtk_box_pack_end(GTK_BOX (box), color1_label, FALSE, TRUE, 0);  
@@ -252,7 +258,7 @@ void adjust_figure_is_filled(GtkToggleButton *togglebutton, gpointer user_data){
 }
 
 void add_fill_widget_to(GtkContainer *box){
-  GtkWidget *fill_check_button_widget = gtk_check_button_new_with_label("Llenar figura");
+  GtkWidget *fill_check_button_widget = gtk_check_button_new_with_label("Llenar\nfigura");
   g_signal_connect(fill_check_button_widget, "toggled",G_CALLBACK(adjust_figure_is_filled), NULL);
   gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);  
 }
@@ -266,4 +272,45 @@ void add_coordinates_label_to(GtkContainer *box){
   coordinates_label = gtk_label_new("");  
   gtk_misc_set_alignment(GTK_MISC(coordinates_label),0,0.5);
   gtk_box_pack_start(GTK_BOX (box), GTK_WIDGET(coordinates_label), FALSE, TRUE, 0);
+}
+
+void adjust_alpha(GtkRange *range,gpointer data){  
+  int alpha_n = GPOINTER_TO_INT(data);
+  
+  if (alpha_n==1){
+    color1_alpha = (int) gtk_range_get_value(range);
+    color1.alpha = color1_alpha;
+  }
+  else{
+    color2_alpha = (int) gtk_range_get_value(range);
+    color2.alpha = color2_alpha;
+  }
+}
+
+void add_alpha_ranges_to(GtkContainer *box){
+  /* alpha1 */
+  GtkWidget *alpha1_label = gtk_label_new("Color 1\nAlpha:");
+  gtk_misc_set_alignment(GTK_MISC(alpha1_label),0,0.5);    
+  GtkWidget *alpha1_widget = gtk_hscale_new_with_range(0,255,1);
+  gtk_widget_set_usize (GTK_WIDGET(alpha1_widget), 100, 45); 
+  g_signal_connect(alpha1_widget, "value-changed",G_CALLBACK(adjust_alpha), GINT_TO_POINTER(1)); 
+  
+  /* alpha 2 */
+  GtkWidget *alpha2_label = gtk_label_new("Color 2\nAlpha:");
+  gtk_misc_set_alignment(GTK_MISC(alpha1_label),0,0.5);    
+  GtkWidget *alpha2_widget = gtk_hscale_new_with_range(0,255,1);
+  gtk_widget_set_usize (GTK_WIDGET(alpha2_widget), 100, 45); 
+  g_signal_connect(alpha2_widget, "value-changed",G_CALLBACK(adjust_alpha), GINT_TO_POINTER(2)); 
+  
+  //default values
+  gtk_range_set_value(GTK_RANGE(alpha1_widget),255);
+  gtk_range_set_value(GTK_RANGE(alpha2_widget),255);
+  adjust_alpha(GTK_RANGE(alpha1_widget),GINT_TO_POINTER(1));
+  adjust_alpha(GTK_RANGE(alpha1_widget),GINT_TO_POINTER(2));
+  
+  gtk_box_pack_end (GTK_BOX (box), alpha2_widget, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), alpha2_label, FALSE, TRUE, 0);
+  add_vertical_separator_to(GTK_CONTAINER(box));
+  gtk_box_pack_end (GTK_BOX (box), alpha1_widget, FALSE, TRUE, 0);
+  gtk_box_pack_end(GTK_BOX (box), alpha1_label, FALSE, TRUE, 0);
 }

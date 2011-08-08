@@ -25,6 +25,7 @@ typedef struct{
 extern XPainterToolItemType current_tool;
 extern int line_width;
 extern XPainterColor color1, color2;
+extern guint16 color1_alpha, color2_alpha;
 
 extern cairo_surface_t *current_surface;
 extern GdkPixbuf *current_surface_pixbuf;

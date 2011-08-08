@@ -57,11 +57,14 @@ int main( int argc,
       
   add_line_width_widget_to(GTK_CONTAINER(bottom_hbox));
   add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));
+  add_alpha_ranges_to(GTK_CONTAINER(bottom_hbox));
+  add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));
   add_color_widgets_to(GTK_CONTAINER(bottom_hbox));
   add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));
   add_fill_widget_to(GTK_CONTAINER(bottom_hbox));  
   //add_font_widget_to(GTK_CONTAINER(bottom_hbox));
-  add_coordinates_label_to(GTK_CONTAINER(bottom_hbox));
+  add_vertical_separator_to(GTK_CONTAINER(bottom_hbox));  
+  add_coordinates_label_to(GTK_CONTAINER(bottom_hbox));  
 
   gtk_widget_show_all (window);
 
