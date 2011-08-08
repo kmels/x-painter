@@ -32,7 +32,11 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
       
       if (event->button==3) { //right click 
 	//might be finishing polygon
-	finish_polygon(&mouseState,event->x,event->y);
+	gboolean finish = finish_polygon(&mouseState,event->x,event->y);
+	
+	if (finish && figure_is_filled)
+	  fill_polygon(&mouseState);
+	
       }else if (event->button==1){ //left click	
 	if (should_save_surface_at_click(current_tool))
 	    save_current_surface(cairo_get_target(mouseState.cr));
@@ -103,9 +107,9 @@ gboolean handle_mouse(GtkWidget *widget, void *e, gpointer *t){
 	  mouseState.ispainting = TRUE;
 	
 	line(mouseState.cr, mouseState.coordinates[mouseState.coordinates_size-1].x, mouseState.coordinates[mouseState.coordinates_size-1].y, event->x,event->y);
-
+	
 	if (mouseState.coordinates[mouseState.coordinates_size-1].x!=event->x || mouseState.coordinates[mouseState.coordinates_size-1].y!=event->y)
-	  save_coordinates(event->x,event->y);
+	  save_coordinates(event->x,event->y);		
       }break;
       case XPainter_FLOOD_TOOL: flood_fill(mouseState.cr,mouseState.coordinates[0].x, mouseState.coordinates[0].y); break;	
       default : break;

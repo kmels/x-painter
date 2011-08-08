@@ -297,6 +297,12 @@ gboolean finish_polygon(mouseStateStruct *mouseState,double x,double y){
   cairo_set_source_rgb(mouseState->cr,(double)color1.red / 255, (double)color1.green / 255, (double)color1.blue / 255);
   //line from the last saved coordinate to the current position
   line(mouseState->cr,mouseState->coordinates[ncoordinates-1].x,mouseState->coordinates[ncoordinates-1].y,x,y);
+  
+  //save the `middle` point
+  mouseState->coordinates[mouseState->coordinates_size].x = x;
+  mouseState->coordinates[mouseState->coordinates_size].y = y;
+  mouseState->coordinates_size++;
+  
   //line from the current position to the first coordinate
   line(mouseState->cr,x,y,mouseState->coordinates[0].x,mouseState->coordinates[0].y);
 
@@ -793,4 +799,34 @@ void fill_ellipse(cairo_t *cr, double cen_x, double cen_y, double current_x, dou
   
   gdk_cairo_set_source_pixbuf(cr,ellipse_pixbuf,0,0);  
   cairo_paint(cr);
+}
+
+
+inline gboolean is_within_polygon(int x, int y,mouseStateStruct *mouseState) {  
+  int      i, j=mouseState->coordinates_size-1;
+  gboolean  oddNodes=FALSE;
+  
+  for (i=0; i < mouseState->coordinates_size; i++) {
+    if ((((mouseState->coordinates[i].y < y) && (mouseState->coordinates[j].y >=y ))
+	 || ((mouseState->coordinates[j].y < y) && (mouseState->coordinates[i].y>=y)))
+	&&  ((mouseState->coordinates[i].x <=x) || (mouseState->coordinates[j].x <=x))) {
+      if (mouseState->coordinates[i].x+(y-mouseState->coordinates[i].y)/(mouseState->coordinates[j].y-mouseState->coordinates[i].y)*(mouseState->coordinates[j].x-mouseState->coordinates[i].x)<x) {
+        oddNodes=!oddNodes;
+      }}
+    j=i; 
+  }
+
+  return oddNodes;
+}
+
+void fill_polygon(mouseStateStruct *mouseState){
+  int x,y;
+  
+  cairo_set_source_rgba(mouseState->cr,(double)color2.red / 255, (double)color2.green / 255, (double)color2.blue / 255,(double)color2_alpha/255);
+  for (x=0; x < canvas->allocation.width; x++){
+    for (y=0; y < canvas->allocation.height; y++){
+      if (is_within_polygon(x,y,mouseState))
+	put_pixel(mouseState->cr,x,y);
+    }
+  }
 }
