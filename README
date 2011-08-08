@@ -24,11 +24,12 @@ Extra
  * Ventanas de error
  * Guardar seleccion a archivo
  * 10 posibles patrones de llenado
+ * Agregar propios patrones dinámicamente:
+    * Importar patron desde imagen
 
 Ideas Extra
 ------------
  * Agregar propios patrones dinámicamente.
- * Importar imagen y mover seleccion 
 
 Specs 
 -----------
@@ -52,7 +53,6 @@ Specs
 
 TODO 
 ------
- * [#A] Flood fill patterns
  * [#A] Texto
  * [#A] Lapicero
  * [#C] Pintar focus en el current tool

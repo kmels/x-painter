@@ -65,4 +65,6 @@ void save_file(GtkWidget *widget, gpointer data);
 void save_file_as(GtkWidget *widget, gpointer data);
 void save_current_selection(GtkWidget *widget, gpointer data);
 void show_error_message(char *message);
+void set_pattern_from_selection(GtkWidget *widget, gpointer data);
+void set_pattern_from_file(GtkWidget *widget, gpointer data);
 #endif

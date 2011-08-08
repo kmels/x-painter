@@ -38,8 +38,11 @@ static GtkItemFactoryEntry menu_items[] = {
   { "/Editar/Copiar", "<control>C", G_CALLBACK(copy), 0, NULL},  
   { "/Editar/Pegar", "<control>V", G_CALLBACK(paste), 0, NULL},
   { "/Editar/separador", NULL, NULL, 0, "<Separator>" },
-  { "/Editar/Undo", "<control>Z", G_CALLBACK(undo), 0, NULL},  
+  { "/Editar/Undo", "<control>Z", G_CALLBACK(undo), 0, NULL},
   { "/Editar/Redo", "<control>Y", G_CALLBACK(redo), 0, NULL},
+  { "/Patrones", NULL, NULL, 0, "<Branch>" },
+  //{ "/Patrones/Establecer desde seleccion", "<control>P", G_CALLBACK(set_pattern_from_selection), 0, NULL},
+  { "/Patrones/Establecer desde archivo", "<control>L", G_CALLBACK(set_pattern_from_file), 0, NULL},
   { "/Ayuda", NULL, NULL, 0, "<LastBranch>" },
   { "/Ayuda/Acerca de", NULL, NULL, 0, NULL },
 };
@@ -125,7 +128,7 @@ void get_toolbar(GtkWidget *window, GtkWidget **toolbar){
 }
 
 
-void set_current_fill_pattern_on_widget(){  
+void set_current_fill_pattern_on_widget(){
   int pattern_number = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(fill_pattern_spin_button_widget));
   cairo_t *cr = gdk_cairo_create(current_fill_pattern->window);
   //cairo_t *cr = gdk_cairo_create(GDK_DRAWABLE(window));

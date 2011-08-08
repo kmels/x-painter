@@ -1,5 +1,6 @@
 #include <gtk/gtk.h>
 #include "global.h"
+#include "widgets_drawer.h"
 #include <string.h>
 
 GtkWidget *window;
@@ -191,7 +192,7 @@ void save_current_selection(GtkWidget *widget, gpointer data){
   if (!selection_is_on){
     show_error_message("No hay nada seleccionado");
     return;
-  }  
+  }
 
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new ("Guardar seleccion como",
@@ -209,4 +210,58 @@ void save_current_selection(GtkWidget *widget, gpointer data){
   
   gtk_widget_destroy (dialog);
   paint_current_surface_on_canvas(gdk_cairo_create(canvas->window));
+}
+
+/*void set_pattern_from_selection(GtkWidget *widget, gpointer data){
+  if (!selection_is_on){
+    show_error_message("No hay nada seleccionado");
+    return;
+  }
+
+  int pattern_number = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(fill_pattern_spin_button_widget));
+  unsigned char *p_data = gdk_pixbuf_get_pixels(selection_pixbuf);
+
+  fill_patterns[pattern_number-1] = gdk_pixbuf_new_from_data(p_data,GDK_COLORSPACE_RGB,TRUE,8,50,50,gdk_pixbuf_get_rowstride(fill_patterns[pattern_number-1]),NULL,NULL);
+  
+  gdk_pixbuf_save (fill_patterns[pattern_number-1], "newpattern.png", "png", &error,NULL);  
+  set_current_fill_pattern_on_widget();
+  }*/
+
+gboolean set_new_pattern_from_file(char* open_filename){
+  size_t filename_length = strlen(open_filename);
+  char *extension = strndup(open_filename+filename_length-3,filename_length);
+  
+  int pattern_number = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(fill_pattern_spin_button_widget));
+  
+  if ((strcmp(extension,"bmp")==0) || (strcmp(extension,"png")==0) || (strcmp(extension,"jpg")==0) || (strcmp(extension,"gif")==0) || (strcmp(extension,"pdf")==0)){
+    fill_patterns[pattern_number-1] = gdk_pixbuf_new_from_file(open_filename,NULL);
+    void set_current_fill_pattern_on_widget();
+    return TRUE;
+  }
+  
+  return FALSE;
+}
+
+void set_pattern_from_file(GtkWidget *widget, gpointer data){
+  GtkWidget *dialog;
+  dialog = gtk_file_chooser_dialog_new ("Abrir Archivo",
+					GTK_WINDOW(window),
+					GTK_FILE_CHOOSER_ACTION_OPEN,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+    
+  gboolean could_load = TRUE;
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT){      
+      char *filename;
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+      could_load = set_new_pattern_from_file(filename);
+  }
+  
+  gtk_widget_destroy (dialog);  
+  
+  if (!could_load)
+    show_error_message("Ocurrio un error al abrir al archivo, extensiones soportadas: PNG, BMP, GIF, PDF y JPG");
+  else
+    current_tool = XPainter_FLOOD_TOOL;
 }
