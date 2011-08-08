@@ -33,6 +33,7 @@ guchar *pixbuf_pixels;
 gboolean selection_is_on;
 double selection_x1, selection_y1, selection_x2, selection_y2;
 double move_x1, move_y1;
+gboolean figure_is_filled;
 
 /* Dirty variables */
 gboolean canvas_drawn;

@@ -239,9 +239,14 @@ void add_color_widgets_to(GtkContainer *box){
   gtk_box_pack_end (GTK_BOX (box), color1_widget, FALSE, TRUE, 0);  
 }
 
+void adjust_figure_is_filled(GtkToggleButton *togglebutton, gpointer user_data){
+  figure_is_filled = gtk_toggle_button_get_active(togglebutton);
+}
+
 void add_fill_widget_to(GtkContainer *box){
   GtkWidget *fill_check_button_widget = gtk_check_button_new_with_label("Llenar figura");
-  gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);
+  g_signal_connect(fill_check_button_widget, "toggled",G_CALLBACK(adjust_figure_is_filled), NULL);
+  gtk_box_pack_end (GTK_BOX (box), fill_check_button_widget , FALSE, TRUE, 0);  
 }
 
 void add_vertical_separator_to(GtkContainer *box){

@@ -188,7 +188,6 @@ void flood_fill(cairo_t *cr,double x, double y){
     list = current_node.next_node;
     
     put_pixel_pixbuf(current_surface_pixbuf,current_node.x,current_node.y);
-
     //check neighbours
     node *new_node;    
     // Up
@@ -424,4 +423,26 @@ gboolean circle(cairo_t *cr, double x0, double y0, double xf, double yf){
     put_pixel(cr,x0 - y, y0 - x);
   }
   return TRUE;
+}
+
+/*inline gboolean is_within_rectangle_bounds(double x,double y, double rect_x1,double rect_y1, double rect_x2, double rect_y2){   
+  gboolean t = (x > rect_x1) && (x < rect_x2) && (y > rect_y1) && (y < rect_y2);
+  return t;
+  }*/
+
+void fill_rectangle(cairo_t *cr, double x1, double y1, double x2, double y2){
+  double xi = x1;
+  double yi = y1;  
+  double xf = x2;
+  double yf = y2;
+
+  if (x2 < x1){
+    xi = x2;
+    xf = x1;
+  }
+  if (y2 < y1){
+    yi = y2;
+    yi = y1;
+  }
+  flood_fill(cr,xi+((int) (xf-xi)/2),yi+((int) (yf-yi)/2));
 }
